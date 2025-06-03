@@ -1,35 +1,33 @@
+<!DOCTYPE html>
 <html>
   <head>
     <meta charset="utf-8">
-    <title>A-Frame joystick forzado</title>
+    <title>A-Frame Joystick Forzado</title>
 
-    <!-- A-Frame y físicas -->
+    <!-- A-Frame -->
     <script src="https://aframe.io/releases/1.7.0/aframe.min.js"></script>
+
+    <!-- Física -->
     <script src="https://cdn.jsdelivr.net/npm/aframe-physics-system@4.0.1/dist/aframe-physics-system.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/aframe-extras@6.1.1/dist/aframe-extras.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/aframe-joystick-component@3.1.0/dist/aframe-joystick-component.min.js"></script>
+
+    <!-- Joystick alternativo -->
+    <script src="https://cdn.rawgit.com/mrturck/aframe-joystick/master/joystick.min.js"></script>
   </head>
   <body>
-    <a-scene physics="driver: ammo; debug: false" shadow="type: pcfsoft">
+    <a-scene joystick physics="driver: ammo; debug: false" shadow="type: pcfsoft">
 
       <!-- Piso -->
-      <a-plane position="0 0 0" rotation="-90 0 0" width="100" height="100" color="#ccc"
-               static-body shadow="receive: true"></a-plane>
+      <a-plane position="0 0 0" rotation="-90 0 0" width="100" height="100" color="#cccccc" static-body></a-plane>
 
-      <!-- Muro visible (solo prueba de colisión) -->
-      <a-box position="0 1 -10" width="20" height="4" depth="0.1" visible="true" static-body></a-box>
+      <!-- Cámara con joystick siempre visible -->
+      <a-entity id="camera" camera position="0 1.6 5" look-controls wasd-controls></a-entity>
 
-      <!-- Cámara SIEMPRE con joystick -->
-      <a-entity id="rig"
-                position="0 1.6 5"
-                camera
-                look-controls
-                joystick-controls="mode: movement"
-                dynamic-body="mass: 1; linearDamping: 0.9">
-      </a-entity>
-
-      <!-- Luz básica -->
+      <!-- Luces -->
       <a-entity light="type: ambient; intensity: 0.5"></a-entity>
+      <a-entity light="type: directional; intensity: 1;" position="5 10 5"></a-entity>
+      <a-entity light="type: directional; intensity: 1;" position="-5 10 -5"></a-entity>
+      <a-entity light="type: spot; angle: 25; intensity: 1; penumbra: 1" position="1 2 7" rotation="-90 0 0"></a-entity>
+
     </a-scene>
   </body>
 </html>
