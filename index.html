@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>A-Frame Joystick Forzado</title>
+    <title>A-Frame Joystick + Modelo GLB</title>
 
     <!-- A-Frame -->
     <script src="https://aframe.io/releases/1.7.0/aframe.min.js"></script>
@@ -10,22 +10,43 @@
     <!-- Física -->
     <script src="https://cdn.jsdelivr.net/npm/aframe-physics-system@4.0.1/dist/aframe-physics-system.min.js"></script>
 
-    <!-- Joystick alternativo -->
+    <!-- Joystick alternativo forzado -->
     <script src="https://cdn.rawgit.com/mrturck/aframe-joystick/master/joystick.min.js"></script>
   </head>
   <body>
     <a-scene joystick physics="driver: ammo; debug: false" shadow="type: pcfsoft">
 
+      <!-- Assets: Modelo GLB -->
+      <a-assets>
+        <a-asset-item id="sala3D" src="sala e.glb"></a-asset-item>
+      </a-assets>
+
+      <!-- Modelo de sala -->
+      <a-gltf-model 
+        id="sala"
+        src="#sala3D" 
+        position="-0.02685 0.01677 0.02993" 
+        scale="1 1 1"
+        shadow="cast: true; receive: true"
+        static-body>
+      </a-gltf-model>
+
       <!-- Piso -->
       <a-plane position="0 0 0" rotation="-90 0 0" width="100" height="100" color="#cccccc" static-body></a-plane>
 
-      <!-- Cámara con joystick siempre visible -->
-      <a-entity id="camera" camera position="0 1.6 5" look-controls wasd-controls></a-entity>
+      <!-- Cámara con joystick visible -->
+      <a-entity id="rig"
+                position="0 1.6 5"
+                camera
+                look-controls
+                wasd-controls
+                dynamic-body="mass: 1; linearDamping: 0.9">
+      </a-entity>
 
       <!-- Luces -->
       <a-entity light="type: ambient; intensity: 0.5"></a-entity>
-      <a-entity light="type: directional; intensity: 1;" position="5 10 5"></a-entity>
-      <a-entity light="type: directional; intensity: 1;" position="-5 10 -5"></a-entity>
+      <a-entity light="type: directional; intensity: 1;" position="5 10 5" target="#sala"></a-entity>
+      <a-entity light="type: directional; intensity: 1;" position="-5 10 -5" target="#sala"></a-entity>
       <a-entity light="type: spot; angle: 25; intensity: 1; penumbra: 1" position="1 2 7" rotation="-90 0 0"></a-entity>
 
     </a-scene>
