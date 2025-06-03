@@ -1,8 +1,39 @@
 <html>
   <head>
+    <meta charset="utf-8">
+    <title>A-Frame experiencia mixta</title>
+
+    <!-- A-Frame -->
     <script src="https://aframe.io/releases/1.7.0/aframe.min.js"></script>
+
+    <!-- Física con ammo.js -->
     <script src="https://cdn.jsdelivr.net/npm/aframe-physics-system@4.0.1/dist/aframe-physics-system.min.js"></script>
+
+    <!-- Extras (universal-controls, etc.) -->
     <script src="https://cdn.jsdelivr.net/npm/aframe-extras@6.1.1/dist/aframe-extras.min.js"></script>
+
+    <!-- Joystick para móviles -->
+    <script src="https://cdn.jsdelivr.net/npm/aframe-joystick-component@3.1.0/dist/aframe-joystick-component.min.js"></script>
+
+    <!-- Componente para activar controles según dispositivo -->
+    <script>
+      AFRAME.registerComponent('smart-controls', {
+        init: function () {
+          const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+          const el = this.el;
+
+          if (isMobile) {
+            console.log('📱 Modo móvil: joystick activado');
+            el.setAttribute('joystick-controls', 'mode: movement');
+          } else {
+            console.log('🖥️ Modo escritorio: teclado activado');
+            el.setAttribute('wasd-controls', '');
+          }
+
+          el.setAttribute('look-controls', '');
+        }
+      });
+    </script>
   </head>
   <body>
     <a-scene physics="driver: ammo; debug: true" shadow="type: pcfsoft">
@@ -39,14 +70,12 @@
       <a-box position="-10 1 0" width="0.1" height="4" depth="20" visible="false" static-body></a-box>
       <a-box position="10 1 0" width="0.1" height="4" depth="20" visible="false" static-body></a-box>
 
-      <!-- Cámara con movimiento por físicas -->
+      <!-- Cámara con controles inteligentes -->
       <a-entity id="rig"
                 position="0 1.6 5"
                 dynamic-body="mass: 1; linearDamping: 0.9"
-                universal-controls
-                wasd-controls
-                camera
-                look-controls>
+                smart-controls
+                camera>
       </a-entity>
 
       <!-- Luces -->
