@@ -71,12 +71,14 @@
       <a-box position="10 1 0" width="0.1" height="4" depth="20" visible="false" static-body></a-box>
 
       <!-- Cámara con controles inteligentes -->
-      <a-entity id="rig"
-                position="0 1.6 5"
-                dynamic-body="mass: 1; linearDamping: 0.9"
-                smart-controls
-                camera>
-      </a-entity>
+      <a-entity
+  id="rig"
+  position="0 1.6 5"
+  dynamic-body="mass: 1; linearDamping: 0.9"
+  joystick-controls="mode: movement"
+  look-controls
+  camera>
+</a-entity>
 
       <!-- Luces -->
       <a-entity light="type: ambient; intensity: 0.5"></a-entity>
