@@ -14,7 +14,7 @@
     <script src="https://cdn.rawgit.com/mrturck/aframe-joystick/master/joystick.min.js"></script>
   </head>
   <body>
-    <a-scene joystick physics="driver: ammo; debug: false" shadow="type: pcfsoft">
+    <a-scene joystick>
 
       <!-- Assets: Modelo GLB -->
       <a-assets>
@@ -27,27 +27,38 @@
         src="#sala3D" 
         position="0 0.1 0" 
         scale="1 1 1"
-        shadow="cast: true; receive: true"
-        static-body>
+        >
       </a-gltf-model>
 
       <!-- Piso -->
-      <a-plane position="0 0 0" rotation="-90 0 0" width="100" height="100" color="#cccccc" static-body></a-plane>
+      <a-plane position="0 0 0" rotation="-90 0 0" width="100" height="100" color="#cccccc"></a-plane>
 
       <!-- Cámara con joystick visible -->
-      <a-entity id="rig"
-                position="20 1.6 0"
+        <a-entity id="rig"
+          position="20 1.6 -10"
+          camera
+          look-controls
+          joystick-controls="mode: movement"
+          wasd-controls>
+</a-entity>
+
+      <!-- <a-entity id="rig"
+                position="20 1.6 -10"
                 camera
                 look-controls
                 wasd-controls
-                dynamic-body="mass: 1; linearDamping: 0.9">
-      </a-entity>
+                >
+      </a-entity>-->
+
+  
 
       <!-- Luces -->
-      <a-entity light="type: ambient; intensity: 5"></a-entity>
-      <a-entity light="type: directional; intensity: 1;" position="5 10 5" target="#sala"></a-entity>
-      <a-entity light="type: directional; intensity: 1;" position="-5 10 -5" target="#sala"></a-entity>
-      <a-entity light="type: spot; angle: 25; intensity: 1; penumbra: 1" position="1 2 7" rotation="-90 0 0"></a-entity>
+      <a-entity light="type: ambient; intensity: 0"></a-entity>
+      <a-entity light="type: directional; intensity: 10;" position="5 2 5" target="#sala"></a-entity>
+      <a-entity light="type: directional; intensity: 10;" position="-5 2 -5" target="#sala"></a-entity>
+      <a-entity light="type: directional; intensity: 10;" position="-5 2 -5" target="#sala"></a-entity>
+
+ 
 
     </a-scene>
   </body>
