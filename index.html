@@ -11,7 +11,8 @@
     <script src="https://cdn.jsdelivr.net/npm/aframe-physics-system@4.0.1/dist/aframe-physics-system.min.js"></script>
 
     <!-- Joystick alternativo forzado -->
-    <script src="https://cdn.rawgit.com/mrturck/aframe-joystick/master/joystick.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/aframe-joystick-component@3.1.0/dist/aframe-joystick-component.min.js"></script>
+
   </head>
   <body>
     <a-scene joystick>
@@ -35,12 +36,13 @@
 
       <!-- Cámara con joystick visible -->
         <a-entity id="rig"
-          position="20 1.6 -10"
           camera
           look-controls
+          wasd-controls
           joystick-controls="mode: movement"
-          wasd-controls>
-</a-entity>
+          position="20 1.6 -10">
+        </a-entity>
+
 
       <!-- <a-entity id="rig"
                 position="20 1.6 -10"
