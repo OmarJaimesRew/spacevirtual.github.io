@@ -56,14 +56,7 @@ AFRAME.registerComponent('auto-info-from-textures', {
       if (!mesh) { return; }
       mesh.traverse(node => {
         if (!node.isMesh || !node.material || !node.material.map) { return; }
-        const box = new THREE.Box3().setFromObject(node);
-        const center = box.getCenter(new THREE.Vector3());
 
-        const wrapper = document.createElement('a-entity');
-        wrapper.setAttribute('position', center);
-        const infoText = `${this.data.textPrefix} ${node.name}`.trim();
-        wrapper.setAttribute('info-listener', `text: ${infoText}`);
-        wrapper.classList.add('info-target');
 
         const textEl = document.createElement('a-text');
         textEl.classList.add('info-text');
@@ -71,9 +64,7 @@ AFRAME.registerComponent('auto-info-from-textures', {
         textEl.setAttribute('visible', 'false');
         textEl.setAttribute('align', 'center');
         textEl.setAttribute('position', '0 0 0.1');
-        wrapper.appendChild(textEl);
 
-        this.el.sceneEl.appendChild(wrapper);
       });
     });
   }
