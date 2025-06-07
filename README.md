@@ -21,6 +21,4 @@ npm test
 
 Esto abrir\xC3\xA1 la escena `aframe_colisiones/index.html` en un navegador sin cabeza y verificar\xC3\xA1 que no existan errores en la consola durante la inicializaci\xC3\xB3n.
 
-## Controles para dispositivos móviles
 
-La escena principal (`index.html`) ahora utiliza **movement-controls** y **universal-controls** de *A-Frame Extras* para ofrecer soporte integrado a teclado, pantalla táctil y gamepad. Estos controles simplifican la navegación en celulares y smartphones.
