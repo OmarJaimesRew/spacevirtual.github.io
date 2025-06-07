@@ -23,9 +23,12 @@ AFRAME.registerComponent('cursor-progress', {
     const progressRing = this.el.querySelector('#cursorProgress');
     if (!progressRing) { return; }
 
+    let intersected = false;
+
     const start = () => {
-      progressRing.setAttribute('visible', true);
+      progressRing.removeAttribute('animation__fill');
       progressRing.removeAttribute('animation__reset');
+      progressRing.setAttribute('visible', true);
       progressRing.setAttribute('animation__fill', {
         property: 'geometry.thetaLength',
         from: 0,
@@ -36,6 +39,7 @@ AFRAME.registerComponent('cursor-progress', {
     };
 
     const reset = () => {
+      progressRing.removeAttribute('animation__fill');
       progressRing.setAttribute('animation__reset', {
         property: 'geometry.thetaLength',
         to: 0,
@@ -44,8 +48,21 @@ AFRAME.registerComponent('cursor-progress', {
       progressRing.setAttribute('visible', false);
     };
 
-    this.el.addEventListener('fusing', start);
-    this.el.addEventListener('mouseleave', reset);
-    this.el.addEventListener('click', reset);
+    this.el.addEventListener('raycaster-intersection', () => {
+      intersected = true;
+      start();
+    });
+
+    this.el.addEventListener('raycaster-intersection-cleared', () => {
+      intersected = false;
+      reset();
+    });
+
+    this.el.addEventListener('click', () => {
+      reset();
+      if (intersected) {
+        start();
+      }
+    });
   }
 });
