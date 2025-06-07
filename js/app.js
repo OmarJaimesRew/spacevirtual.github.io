@@ -31,7 +31,7 @@ AFRAME.registerComponent('cursor-progress', {
         property: 'geometry.thetaLength',
         from: 0,
         to: 360,
-        dur: 3000,
+        dur: 1500,
         easing: 'linear'
       });
     };
@@ -57,19 +57,6 @@ AFRAME.registerComponent('auto-info-from-textures', {
       mesh.traverse(node => {
         if (!node.isMesh || !node.material || !node.material.map) { return; }
 
-        const box = new THREE.Box3().setFromObject(node);
-        const center = box.getCenter(new THREE.Vector3());
-
-        const target = document.createElement('a-sphere');
-        target.setAttribute('radius', '0.05');
-        target.setAttribute('position', center);
-        target.setAttribute('material', 'visible: false; opacity: 0');
-
-        const imgName = node.material.map.name || node.name;
-        const infoText = (window.IMAGE_TEXTS && window.IMAGE_TEXTS[imgName]) ||
-          `${this.data.textPrefix} ${imgName}`.trim();
-        target.setAttribute('info-listener', `text: ${infoText}`);
-        target.classList.add('info-target');
 
         const textEl = document.createElement('a-text');
         textEl.classList.add('info-text');
@@ -77,9 +64,7 @@ AFRAME.registerComponent('auto-info-from-textures', {
         textEl.setAttribute('visible', 'false');
         textEl.setAttribute('align', 'center');
         textEl.setAttribute('position', '0 0 0.1');
-        target.appendChild(textEl);
 
-        this.el.sceneEl.appendChild(target);
       });
     });
   }
