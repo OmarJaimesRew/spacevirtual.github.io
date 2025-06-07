@@ -31,7 +31,7 @@ AFRAME.registerComponent('cursor-progress', {
         property: 'geometry.thetaLength',
         from: 0,
         to: 360,
-        dur: 3000,
+        dur: 1500,
         easing: 'linear'
       });
     };
