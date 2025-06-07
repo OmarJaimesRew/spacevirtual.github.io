@@ -24,8 +24,7 @@ AFRAME.registerComponent('cursor-progress', {
     if (!progressRing) { return; }
 
     const start = () => {
-      progressRing.setAttribute('visible', true);
-      progressRing.removeAttribute('animation__reset');
+
       progressRing.setAttribute('animation__fill', {
         property: 'geometry.thetaLength',
         from: 0,
@@ -36,16 +35,12 @@ AFRAME.registerComponent('cursor-progress', {
     };
 
     const reset = () => {
-      progressRing.setAttribute('animation__reset', {
-        property: 'geometry.thetaLength',
-        to: 0,
-        dur: 0
-      });
+
       progressRing.setAttribute('visible', false);
     };
 
     this.el.addEventListener('fusing', start);
     this.el.addEventListener('mouseleave', reset);
-    this.el.addEventListener('click', reset);
+
   }
 });
