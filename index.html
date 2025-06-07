@@ -92,9 +92,9 @@
       <!-- C\xC3\xA1mara con joystick visible -->
       <a-entity id="rig"
         camera
-        look-controls
-        wasd-controls
-        touch-controls
+        look-controls="touchEnabled: true"
+        universal-controls
+        movement-controls="controls: keyboard, touch, gamepad"
         joystick-controls="mode: movement"
         position="20 1.6 -10">
         <a-cursor id="cursor" fuse="true" fuseTimeout="3000" raycaster="objects: .info-target" position="0 0 -1" geometry="primitive: ring; radiusInner: 0.005; radiusOuter: 0.008" material="color: black; shader: flat" cursor-progress>
