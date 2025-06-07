@@ -1,0 +1,12 @@
+{
+  "name": "spacevirtual.github.io",
+  "version": "1.0.0",
+  "description": "Site 3D A-Frame",
+  "scripts": {
+    "test": "echo \"No tests specified\" && exit 0",
+    "start": "lite-server"
+  },
+  "devDependencies": {
+    "lite-server": "^2.6.1"
+  }
+}
