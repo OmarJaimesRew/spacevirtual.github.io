@@ -23,4 +23,4 @@ Esto abrir\xC3\xA1 la escena `aframe_colisiones/index.html` en un navegador sin 
 
 ## Controles para dispositivos móviles
 
-La escena principal (`index.html`) ahora utiliza **movement-controls** y **universal-controls** de *A-Frame Extras* para ofrecer soporte integrado a teclado, pantalla táctil y gamepad. Estos controles simplifican la navegación en celulares y smartphones.
+La escena principal (`index.html`) habilita **wasd-controls**, **touch-controls** y **universal-controls** de *A-Frame Extras* para ofrecer soporte integrado a teclado, pantalla táctil y gamepad. Estos controles simplifican la navegación en celulares, smartphones y navegadores de escritorio.
