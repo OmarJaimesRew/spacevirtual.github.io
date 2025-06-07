@@ -65,7 +65,7 @@
       <a-assets>
         <a-asset-item id="sala3D" src="virtual1.glb"></a-asset-item>
         <img id="painting1" src="PORTADA.jpg">
-        <img id="painting2" src="PORTADA.jpg">
+       
       </a-assets>
       <!-- Cielo con degradado de azul a blanco -->
       <a-sky gradient-sky="topColor: #88ccff; bottomColor: #ffffff"></a-sky>
@@ -83,10 +83,7 @@
       <a-image id="img1" class="info-target" src="#painting1" position="0 1.5 -3" width="2" height="1" info-listener="text: Informaci\xC3\xB3n de la imagen 1">
         <a-text value="Informaci\xC3\xB3n de la imagen 1" class="info-text" visible="false" align="left" width="2" color="#88ccff" position="-0.95 -0.6 0"></a-text>
       </a-image>
-      <a-image id="img2" class="info-target" src="#painting2" position="3 1.5 -3" width="2" height="1" info-listener="text: Informaci\xC3\xB3n de la imagen 2">
-        <a-text value="Informaci\xC3\xB3n de la imagen 2" class="info-text" visible="false" align="left" width="2" position="1.2 0 0"></a-text>
-      </a-image>
-
+    
       <!-- Piso -->
       <a-plane position="0 0 0" rotation="-90 0 0" width="100" height="100" color="#cccccc"></a-plane>
 
@@ -94,8 +91,10 @@
       <a-entity id="rig"
         camera
         look-controls="touchEnabled: true"
+
         movement-controls="controls: keyboard, touch, gamepad"
         universal-controls
+
         joystick-controls="mode: movement"
         position="20 1.6 -10">
         <a-cursor id="cursor" fuse="true" fuseTimeout="3000" raycaster="objects: .info-target" position="0 0 -1" geometry="primitive: ring; radiusInner: 0.005; radiusOuter: 0.008" material="color: black; shader: flat" cursor-progress>
