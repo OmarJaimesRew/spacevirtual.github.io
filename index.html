@@ -17,8 +17,47 @@
     <script src="https://cdn.jsdelivr.net/npm/aframe-joystick-component@3.1.0/dist/aframe-joystick-component.min.js"></script>
     <script src="js/image-texts.js"></script>
     <script src="js/app.js"></script>
+    <style>
+      #loading-screen {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background: #000;
+        z-index: 9999;
+      }
+
+      #loading-screen img {
+        max-width: 80%;
+        height: auto;
+      }
+
+      #loader {
+        margin-top: 20px;
+        border: 8px solid #f3f3f3;
+        border-top: 8px solid #444;
+        border-radius: 50%;
+        width: 60px;
+        height: 60px;
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+    </style>
   </head>
   <body>
+    <div id="loading-screen">
+      <img src="PORTADA.jpg" alt="Portada">
+      <div id="loader"></div>
+    </div>
     <a-scene>
 
       <!-- Assets: Modelo GLB -->
@@ -69,5 +108,15 @@
       <a-entity light="type: directional; intensity: 10;" position="-5 10 -5" target="#sala"></a-entity>
 
     </a-scene>
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        var modelEl = document.querySelector('#sala');
+        var loadingEl = document.getElementById('loading-screen');
+        if (!modelEl || !loadingEl) { return; }
+        var hide = function () { loadingEl.style.display = 'none'; };
+        if (modelEl.hasLoaded) { hide(); }
+        else { modelEl.addEventListener('model-loaded', hide); }
+      });
+    </script>
   </body>
 </html>
