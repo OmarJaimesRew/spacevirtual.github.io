@@ -40,12 +40,12 @@
 
       #loader {
         margin-top: 20px;
-        border: 8px solid #f3f3f3;
-        border-top: 8px solid #444;
+        border: 6px solid #04580b;
+        border-top: 5px solid #ffde4c;
         border-radius: 50%;
-        width: 60px;
-        height: 60px;
-        animation: spin 2s linear infinite;
+        width: 40px;
+        height: 40px;
+        animation: spin 3s linear infinite;
       }
 
       @keyframes spin {
@@ -67,8 +67,7 @@
         <img id="painting1" src="PORTADA.jpg">
        
       </a-assets>
-      <!-- Cielo -->
-      <a-sky color="#88ccff"></a-sky>
+    
 
       <!-- Modelo de sala -->
       <a-gltf-model
@@ -84,28 +83,19 @@
         <a-text value="Informaci\xC3\xB3n de la imagen 1" class="info-text" visible="false" align="left" width="2" color="#88ccff" position="-0.95 -0.6 0"></a-text>
       </a-image>
     
-      <!-- Piso -->
-      <a-plane position="0 0 0" rotation="-90 0 0" width="100" height="100" color="#cccccc"></a-plane>
+     
 
       <!-- C\xC3\xA1mara con joystick visible -->
-      <a-entity id="rig"
-        camera
-        look-controls="touchEnabled: true"
-
-        movement-controls="controls: keyboard, touch, gamepad"
-        universal-controls
-
-        joystick-controls="mode: movement"
-        position="20 1.6 -10">
+      <a-entity camera look-controls position="20 1.6 -7" wasd-controls joystick="enabled: true; left: true; right: false; up: true; down: false" joystick-controls>
         <a-cursor id="cursor" fuse="true" fuseTimeout="3000" raycaster="objects: .info-target" position="0 0 -1" geometry="primitive: ring; radiusInner: 0.005; radiusOuter: 0.008" material="color: black; shader: flat" cursor-progress>
           <a-ring id="cursorProgress" position="0 0 -0.001" radius-inner="0.009" radius-outer="0.011" color="#4CAF50" theta-length="0" visible="false"></a-ring>
         </a-cursor>
       </a-entity>
 
       <!-- Luces -->
-      <a-entity light="type: ambient; intensity: 0"></a-entity>
-      <a-entity light="type: directional; intensity: 10;" position="5 10 5" target="#sala"></a-entity>
-      <a-entity light="type: directional; intensity: 10;" position="-5 10 -5" target="#sala"></a-entity>
+      
+      <a-entity light="type: directional; intensity: 10;" position="20 1.5 10" target= 20 1.6 -7></a-entity>
+      <a-entity light="type: directional; intensity: 6;" position="-20 1.5 -7" target="#sala"></a-entity>
 
     </a-scene>
     <script>
