@@ -29,7 +29,7 @@
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        background: #0c0568;
+        background: #ffffff;
         z-index: 9999;
       }
 
@@ -40,11 +40,11 @@
 
       #loader {
         margin-top: 20px;
-        border: 6px solid #04580b;
-        border-top: 5px solid #ffde4c;
+        border: 6px solid #058610;
+        border-top: 5px solid #a28606;
         border-radius: 50%;
-        width: 40px;
-        height: 40px;
+        width: 35px;
+        height: 35px;
         animation: spin 3s linear infinite;
       }
 
@@ -102,8 +102,8 @@
       </a-gltf-model>
 
       <!-- Ejemplos de im\xC3\xA1genes con informaci\xC3\xB3n -->
-      <a-image id="img1" class="info-target" src="#painting1" position="-0.48 1.6 -1.05" scale="4.8 3 0"  info-listener="text: Informaci\xC3\xB3n de la imagen 1">
-        <a-text value="Informaci\xC3\xB3n de la imagen 1" class="info-text" visible="false" align="left" width="2" color="#88ccff" position="-0.95 -0.6 0"></a-text>
+      <a-image id="img1"  src="#painting1" position="-0.48 1.6 -1.05" scale="4.8 3 0" >
+        
       </a-image>
     
      
@@ -196,7 +196,7 @@
 </a-image>
 
 <a-image id="img12" class="info-target" src="1455b.jpg"
-         position="15 1.6 -12" scale="2.5 2.5 1" rotation="0 121 0"
+         position="6 1.6 10" scale="2.5 2.5 1" rotation="0 -126 0"
          info-listener="text: S/T \nLeopoldo Flores \nTinta sobre servilleta \n14 x 13 cm. \nAño 1983">
   <a-text value="Información" class="info-text"
           visible="false" align="left" width="1"
@@ -220,7 +220,7 @@
 </a-image>
 
 <a-image id="img15" class="info-target" src="1361.jpg"
-         position="5.8 1.6 -9.7" scale="2.5 2.7 1" rotation="0 46 0"
+         position="-3.8 1.6 -13" scale="2.5 2.7 1" rotation="0 8 0"
          info-listener="text:  S/T \nLeopoldo Flores \nTinta sobre servilleta \nDimensiones variables \n1988 México, D.F.">
   <a-text value="Información" class="info-text"
           visible="false" align="left" width="1"
@@ -236,7 +236,7 @@
 </a-image>
 
 <a-image id="img17" class="info-target" src="1386.jpg"
-         position="10.7 1.6 -15" scale="2.5 4 1" rotation="0 -40 0"
+         position="9 2.2 -11" scale="2.5 4 1" rotation="0 -40 0"
          info-listener="text: S/T \nLeopoldo Flores \nTinta sobre servilleta \n13.5 x 25.0 cm \n1981">
   <a-text value="Información" class="info-text"
           visible="false" align="left" width="1"
@@ -244,7 +244,7 @@
 </a-image>
 
 <a-image id="img18" class="info-target" src="1452.jpg"
-         position="15.4 1.6 -12" scale="2.5 3.2 1" rotation="0 -57 0"
+         position="15.4 2.2 -12" scale="2.5 3.2 1" rotation="0 -57 0"
          info-listener="text: S/T \nLeopoldo Flores \nTinta sobre servilleta \n11.5 x 15 cm. \n1980">
   <a-text value="Información" class="info-text"
           visible="false" align="left" width="1"
@@ -252,7 +252,7 @@
 </a-image>
 
 <a-image id="img19" class="info-target" src="1469.jpg"
-         position="13 1.6 -8" scale="2.5 2.2 1" rotation="0 -65 0"
+         position="14 1.6 -5.5" scale="2.5 2.2 1" rotation="0 -65 0"
          info-listener="text: S/T \nLeopoldo Flores \nTinta sobre servilleta \n14 x 12.5 cm. \n1984">
   <a-text value="Información" class="info-text"
           visible="false" align="left" width="1"
@@ -268,7 +268,7 @@
 </a-image>
 
 <a-image id="img21" class="info-target" src="1237b red.jpg"
-         position="12 1.6 -0.9" scale="2.5 2.7 1" rotation="0 120 0"
+         position="12 1.6 -0.9" scale="2.5 2.7 1" rotation="0 -85 0"
          info-listener="text: S/T \nLeopoldo Flores \nTinta sobre servilleta \n14 x 12 cms \n1980">
   <a-text value="Información" class="info-text"
           visible="false" align="left" width="1"
@@ -279,7 +279,7 @@
       <!-- C\xC3\xA1mara con joystick visible -->
       <a-entity  id="camera" camera look-controls position="0 1.6 8" wasd-controls joystick="enabled: true; left: true; right: true; up: true; down: true" joystick-controls>
         <a-cursor id="cursor" fuse="true" fuseTimeout="3000" raycaster="objects: .info-target" position="0 0 -1" geometry="primitive: ring; radiusInner: 0.005; radiusOuter: 0.008" material="color: black; shader: flat" cursor-progress>
-          <a-ring id="cursorProgress" position="0 0 -0.001" radius-inner="0.009" radius-outer="0.011" color="#4CAF50" theta-length="0" visible="false"></a-ring>
+          <a-ring id="cursorProgress" position="0 0 -0.001" radius-inner="0.009" radius-outer="0.011" color="#005603" theta-length="0" visible="false"></a-ring>
         </a-cursor>
       </a-entity>
 <!-- Activar joystick virtual -->
@@ -289,10 +289,10 @@
   
       <!-- Cuatro luces direccionales -->
       
-      <a-entity light="type: point; intensity: 1" position="0 3.6 15.7" scale="20 5 0"></a-entity>
-      <a-entity light="type: point; intensity: 1" position="22.4 3.6 -5.8" rotation="0 90 0" scale="20 5 0" color="#f7e4d4"></a-entity>
-      <a-entity light="type: point; intensity: 1" position="-22.4 3.6 -5.8" rotation="0 90 0" scale="20 5 0" color="#f7e4d4"></a-entity>
-       <a-entity light="type: point; intensity: 1" position="0 3.6 -35" scale="20 5 -30"></a-entity>
+      <a-entity light="type: point; intensity: 1.8" position="0 3.6 15.7" scale="20 5 0"></a-entity>
+      <a-entity light="type: point; intensity: 2" position="22.4 3.6 -5.8" rotation="0 90 0" scale="20 5 0" color="#f7e4d4"></a-entity>
+      <a-entity light="type: point; intensity: 2" position="-22.4 3.6 -5.8" rotation="0 90 0" scale="20 5 0" color="#f7e4d4"></a-entity>
+       <a-entity light="type: point; intensity: 1.8" position="0 3.6 -35" scale="20 5 -30"></a-entity>
       
 
 
