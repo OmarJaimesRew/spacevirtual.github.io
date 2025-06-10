@@ -5,10 +5,18 @@
     <title>Bitacora de Emergencia- Leopoldo Flores</title>
 
     <!-- A-Frame -->
-    <script src="https://aframe.io/releases/1.4.1/aframe.min.js"></script>
-
-  <!-- Cargar componente de joystick virtual -->
+    <script src="libs/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/aframe-virtual-joystick/dist/aframe-virtual-joystick.js"></script>
+  
+  
+    <!-- Controles para dispositivos m\xC3\xB3viles -->
+    <script src="libs/aframe-extras.min.js"></script>
+    <script src="libs/aframe-extras.controls.min.js"></script>
+
+    <!-- Joystick alternativo forzado -->
+    <script src="libs/aframe-joystick-component.min.js"></script>
+    <script src="js/image-texts.js"></script>
+    <script src="js/app.js"></script>
     
     <style>
       #loading-screen {
@@ -51,10 +59,12 @@
       <img src="portada.png" alt="Portada">
       <div id="loader"></div>
     </div>
-  <a-scene vr-mode-ui="enabled: false">
+    <a-scene>
 
-      <!-- Assets: Imágenes -->
+      <!-- Assets: Modelo GLB -->
       <a-assets>
+        <a-asset-item id="sala3D" src="virtual1.glb"></a-asset-item>
+        <!-- Lista de assets extraídos del GLB -->
 <img id="painting1" src="PORTADA.jpg">
 <img id="painting2" src="1225 red.jpg">
 <img id="painting3" src="1281.jpg">
@@ -81,18 +91,15 @@
        
       </a-assets>
     
-      <a-plane position="0 0 -4" rotation="-90 0 0" width="100" height="100" color="#7CFC00">
-      </a-plane>
 
-      <!-- Modelo de sala 
-      
+      <!-- Modelo de sala -->
       <a-gltf-model
         id="sala"
         src="#sala3D"
         position="-20 0.1 15"
         scale="1 1 1"
         auto-info-from-textures>
-      </a-gltf-model>-->
+      </a-gltf-model>
 
       <!-- Ejemplos de im\xC3\xA1genes con informaci\xC3\xB3n -->
       <a-image id="img1" class="info-target" src="#painting1" position="-0.48 1.6 -1.05" scale="4.8 3 0"  info-listener="text: Informaci\xC3\xB3n de la imagen 1">
@@ -105,7 +112,7 @@
          position="-13 1.6 10 " scale="2.5 2.5 1" rotation="0 65 0"
          info-listener="text: S/T \nLeopoldo Flores \nTinta sobre servilleta \n16.5 x 17 cm \n1988">
   <a-text value="Sin título \nLeopoldo Flores Valdés \nTinta sobre servilleta \n16.5 x 17 \n1988" class="info-text"
-          visible="false" align="left" width="2"
+          visible="false" align="left" width="1"
           color="#0c0568" position="0.5 -0.28 0"></a-text>
 </a-image>
 
@@ -114,7 +121,7 @@
          position="-10 1.6 3.5" scale="2.5 2.5 1" rotation="0 65 0"
          info-listener="text: S/T \nLeopoldo Flores \nTinta sobre servilleta \n14 x 13 cm  \n1988">
   <a-text value="Sin título \nLeopoldo Flores Valdés \nTinta sobre servilleta \n14 x 13 cm  \n1988" class="info-text"
-          visible="false" align="left" width="2"
+          visible="false" align="left" width="1"
           color="#0c0568" position="0.5 -0.28 0"></a-text>
 </a-image>
 
@@ -123,7 +130,7 @@
          position="-8 1.6 -6" scale="2.5 2.5 1" rotation="0 45 0"
          info-listener="text: S/T \nLeopoldo Flores \nTinta sobre servilleta \n14.5 x 13.5 cm  \n1980">
   <a-text value="Información" class="info-text"
-          visible="false" align="left" width="2"
+          visible="false" align="left" width="1"
           color="#0c0568" position="0.5 -0.28 0"></a-text>
 </a-image>
 
@@ -132,7 +139,7 @@
          position="-13 1.6 -1" scale="2.5 2.5 1" rotation="0 80 0"
          info-listener="text: S/T \nLeopoldo Flores \nTinta sobre servilleta \n14.5 x 13.5 cm  \n1980">
   <a-text value="Información" class="info-text"
-          visible="false" align="left" width="2"
+          visible="false" align="left" width="1"
           color="#0c0568" position="0.5 -0.28 0"></a-text>
 </a-image>
 
@@ -141,7 +148,7 @@
          position="-12 1.6 -11" scale="2.5 2.5 1" rotation="0 43 0"
          info-listener="text: S/T \nLeopoldo Flores \nTinta sobre servilleta \n14 x 12.5 cm  \n1988">
   <a-text value="Información" class="info-text"
-          visible="false" align="left" width="2"
+          visible="false" align="left" width="1"
           color="#0c0568" position="0.5 -0.28 0"></a-text>
 </a-image>
 
@@ -150,7 +157,7 @@
             position="-10 1.6 -17" scale="2.5 2.5 1" rotation="0 46 0"
          info-listener="text: S/T \nLeopoldo Flores \nTinta sobre servilleta \n12.5 x 14 cm  \n1986">
   <a-text value="Información" class="info-text"
-          visible="false" align="left" width="2"
+          visible="false" align="left" width="1"
           color="#0c0568" position="0.5 -0.28 0"></a-text>
 </a-image>
 
@@ -159,7 +166,7 @@
             position="-13 1.6 -23" scale="2.5 2.5 1" rotation="0 46 0"
          info-listener="text: S/T \nLeopoldo Flores \nTinta sobre servilleta \n12.5 x 14 cm  \n1986">
   <a-text value="Información" class="info-text"
-          visible="false" align="left" width="2"
+          visible="false" align="left" width="1"
           color="#0c0568" position="0.5 -0.28 0"></a-text>
           </a-image>
 
@@ -168,7 +175,7 @@
          position="5 1.6 -18" scale="2.5 2.5 1" rotation="0 0 0"
          info-listener="text: S/T \nLeopoldo Flores \nTinta sobre servilleta \n12.5 x 14 cm. \n1983">
   <a-text value="Información" class="info-text"
-          visible="false" align="left" width="2"
+          visible="false" align="left" width="1"
           color="#0c0568" position="0.5 -0.28 0"></a-text>
 </a-image>
 
@@ -176,7 +183,7 @@
          position="10 1.6 -18" scale="2.5 2.5 1" rotation="0 -21 0"
          info-listener="text: S/T \nLeopoldo Flores \nTinta sobre servilleta \nDimensiones variables \nAño desconocido">
   <a-text value="Información" class="info-text"
-          visible="false" align="left" width="2"
+          visible="false" align="left" width="1"
           color="#0c0568" position="0.5 -0.28 0"></a-text>
 </a-image>
 
@@ -184,7 +191,7 @@
          position="15 1.6 -19" scale="2.5 2.5 1" rotation="0 -49 0"
          info-listener="text: S/T \nLeopoldo Flores \nTinta sobre servilleta \n14 x 13 cm. \nAño 1983">
   <a-text value="Información" class="info-text"
-          visible="false" align="left" width="2"
+          visible="false" align="left" width="1"
           color="#0c0568" position="0.5 -0.28 0"></a-text>
 </a-image>
 
@@ -192,7 +199,7 @@
          position="15 1.6 -12" scale="2.5 2.5 1" rotation="0 121 0"
          info-listener="text: S/T \nLeopoldo Flores \nTinta sobre servilleta \n14 x 13 cm. \nAño 1983">
   <a-text value="Información" class="info-text"
-          visible="false" align="left" width="2"
+          visible="false" align="left" width="1"
           color="#0c0568" position="0.5 -0.28 0"></a-text>
 </a-image>
 
@@ -200,7 +207,7 @@
          position="3.8 1.6 -0.9" scale="2.5 2.5 1" rotation="0 0 0"
          info-listener="text: S/T (Nápoles, Italia) \nLeopoldo Flores \nTinta sobre servilleta \n16.5 x 16.5 cm  \n1979">
   <a-text value="Información" class="info-text"
-          visible="false" align="left" width="2"
+          visible="false" align="left" width="1"
           color="#0c0568" position="0.5 -0.28 0"></a-text>
 </a-image>
 
@@ -208,7 +215,7 @@
          position="-0.15 1.6 13.4" scale="4.8 2.5 1" rotation="0 180 0"
          info-listener="text: Madrid, España \nLeopoldo Flores \nTinta sobre servilleta \n19.5 x 10 cm. variables \n1983">
   <a-text value="Información" class="info-text"
-          visible="false" align="left" width="2"
+          visible="false" align="left" width="1" heigt="2"
           color="#0c0568" position="0.5 -0.28 0"></a-text>
 </a-image>
 
@@ -216,7 +223,7 @@
          position="5.8 1.6 -9.7" scale="2.5 2.7 1" rotation="0 46 0"
          info-listener="text:  S/T \nLeopoldo Flores \nTinta sobre servilleta \nDimensiones variables \n1988 México, D.F.">
   <a-text value="Información" class="info-text"
-          visible="false" align="left" width="2"
+          visible="false" align="left" width="1"
           color="#0c0568" position="0.5 -0.28 0"></a-text>
 </a-image>
 
@@ -224,7 +231,7 @@
          position="-1.2 1.6 -22" scale="4.8 2.5 1" rotation="0 0 0"
          info-listener="text: Hombre con manzana en el estómago\n y tigre en reposo \nLeopoldo Flores \nTinta sobre servilleta \n24.5 x 22.5 cm. \n1982">
   <a-text value="Información" class="info-text"
-          visible="false" align="left" width="2"
+          visible="false" align="left" width="1"
           color="#0c0568" position="0.5 -0.28 0"></a-text>
 </a-image>
 
@@ -232,7 +239,7 @@
          position="10.7 1.6 -15" scale="2.5 4 1" rotation="0 -40 0"
          info-listener="text: S/T \nLeopoldo Flores \nTinta sobre servilleta \n13.5 x 25.0 cm \n1981">
   <a-text value="Información" class="info-text"
-          visible="false" align="left" width="2"
+          visible="false" align="left" width="1"
           color="#0c0568" position="0.5 -0.28 0"></a-text>
 </a-image>
 
@@ -240,7 +247,7 @@
          position="15.4 1.6 -12" scale="2.5 3.2 1" rotation="0 -57 0"
          info-listener="text: S/T \nLeopoldo Flores \nTinta sobre servilleta \n11.5 x 15 cm. \n1980">
   <a-text value="Información" class="info-text"
-          visible="false" align="left" width="2"
+          visible="false" align="left" width="1"
           color="#0c0568" position="0.5 -0.28 0"></a-text>
 </a-image>
 
@@ -248,7 +255,7 @@
          position="13 1.6 -8" scale="2.5 2.2 1" rotation="0 -65 0"
          info-listener="text: S/T \nLeopoldo Flores \nTinta sobre servilleta \n14 x 12.5 cm. \n1984">
   <a-text value="Información" class="info-text"
-          visible="false" align="left" width="2"
+          visible="false" align="left" width="1"
           color="#0c0568" position="0.5 -0.28 0"></a-text>
 </a-image>
 
@@ -256,45 +263,46 @@
          position="8 1.6 5" scale="2.5 2.7 1" rotation="0 -121 0"
          info-listener="text: S/T \nLeopoldo Flores \nTinta sobre servilleta \n14 x 12 cms \n1980">
   <a-text value="Información" class="info-text"
-          visible="false" align="left" width="2"
+          visible="false" align="left" width="1"
           color="#0c0568" position="0.5 -0.28 0"></a-text>
 </a-image>
 
 <a-image id="img21" class="info-target" src="1237b red.jpg"
-         position="12 1.6 -0.9" scale="2.5 2.7 1" rotation="0 -92 0"
+         position="12 1.6 -0.9" scale="2.5 2.7 1" rotation="0 120 0"
          info-listener="text: S/T \nLeopoldo Flores \nTinta sobre servilleta \n14 x 12 cms \n1980">
   <a-text value="Información" class="info-text"
-          visible="false" align="left" width="2"
+          visible="false" align="left" width="1"
           color="#0c0568" position="0.5 -0.28 0"></a-text>
 </a-image>
 
 
       <!-- C\xC3\xA1mara con joystick visible -->
-      <a-entity camera look-controls position="0 1.6 8" wasd-controls joystick="enabled: true; left: true; right: false; up: true; down: false" joystick-controls>
+      <a-entity  id="camera" camera look-controls position="0 1.6 8" wasd-controls joystick="enabled: true; left: true; right: false; up: true; down: false" joystick-controls>
         <a-cursor id="cursor" fuse="true" fuseTimeout="3000" raycaster="objects: .info-target" position="0 0 -1" geometry="primitive: ring; radiusInner: 0.005; radiusOuter: 0.008" material="color: black; shader: flat" cursor-progress>
           <a-ring id="cursorProgress" position="0 0 -0.001" radius-inner="0.009" radius-outer="0.011" color="#4CAF50" theta-length="0" visible="false"></a-ring>
         </a-cursor>
       </a-entity>
-
+<!-- Activar joystick virtual -->
+      <a-entity joystick></a-entity>
   
       <!-- Cuatro luces direccionales -->
       
-      <a-entity light="type: point; intensity: 2.5" position="0 3.6 15.7" scale="20 5 0"></a-entity>
-      <a-entity light="type: point; intensity: 2" position="22.4 3.6 -5.8" rotation="0 90 0" scale="20 5 0" color="#f7e4d4"></a-entity>
-      <a-entity light="type: point; intensity: 2" position="-22.4 3.6 -5.8" rotation="0 90 0" scale="20 5 0" color="#f7e4d4"></a-entity>
-       <a-entity light="type: point; intensity: 2.5" position="0 3.6 -35" scale="20 5 -30"></a-entity>
+      <a-entity light="type: point; intensity: 1" position="0 3.6 15.7" scale="20 5 0"></a-entity>
+      <a-entity light="type: point; intensity: 1" position="22.4 3.6 -5.8" rotation="0 90 0" scale="20 5 0" color="#f7e4d4"></a-entity>
+      <a-entity light="type: point; intensity: 1" position="-22.4 3.6 -5.8" rotation="0 90 0" scale="20 5 0" color="#f7e4d4"></a-entity>
+       <a-entity light="type: point; intensity: 1" position="0 3.6 -35" scale="20 5 -30"></a-entity>
       
 
 
     </a-scene>
     <script>
       document.addEventListener('DOMContentLoaded', function () {
+        var modelEl = document.querySelector('#sala');
         var loadingEl = document.getElementById('loading-screen');
-        var assetsEl = document.querySelector('a-assets');
-        if (!loadingEl || !assetsEl) { return; }
+        if (!modelEl || !loadingEl) { return; }
         var hide = function () { loadingEl.style.display = 'none'; };
-        if (assetsEl.hasLoaded) { hide(); }
-        else { assetsEl.addEventListener('loaded', hide); }
+        if (modelEl.hasLoaded) { hide(); }
+        else { modelEl.addEventListener('model-loaded', hide); }
       });
     </script>
   </body>
