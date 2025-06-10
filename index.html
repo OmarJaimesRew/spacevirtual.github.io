@@ -5,19 +5,11 @@
     <title>Bitacora de Emergencia- Leopoldo Flores</title>
 
     <!-- A-Frame -->
-    <script src="libs/aframe.min.js"></script>
+    <script src="https://aframe.io/releases/1.4.1/aframe.min.js"></script>
 
-    <!-- F\xC3\xADsica
-    <script src="https://cdn.jsdelivr.net/npm/aframe-physics-system@4.0.1/dist/aframe-physics-system.min.js"></script>-->
-
-    <!-- Controles para dispositivos m\xC3\xB3viles -->
-    <script src="libs/aframe-extras.min.js"></script>
-    <script src="libs/aframe-extras.controls.min.js"></script>
-
-    <!-- Joystick alternativo forzado -->
-    <script src="libs/aframe-joystick-component.min.js"></script>
-    <script src="js/image-texts.js"></script>
-    <script src="js/app.js"></script>
+  <!-- Cargar componente de joystick virtual -->
+    <script src="https://cdn.jsdelivr.net/npm/aframe-virtual-joystick/dist/aframe-virtual-joystick.js"></script>
+    
     <style>
       #loading-screen {
         position: fixed;
@@ -59,12 +51,12 @@
       <img src="portada.png" alt="Portada">
       <div id="loader"></div>
     </div>
-    <a-scene>
+  <a-scene vr-mode-ui="enabled: false">
 
       <!-- Assets: Modelo GLB -->
       <a-assets>
-        <a-asset-item id="sala3D" src="virtual1.glb"></a-asset-item>
-        <!-- Lista de assets extraídos del GLB -->
+        <!--<a-asset-item id="sala3D" src="virtual1.glb"></a-asset-item>
+         Lista de assets extraídos del GLB -->
 <img id="painting1" src="PORTADA.jpg">
 <img id="painting2" src="1225 red.jpg">
 <img id="painting3" src="1281.jpg">
@@ -91,15 +83,18 @@
        
       </a-assets>
     
+      <a-plane position="0 0 -4" rotation="-90 0 0" width="100" height="100" color="#7CFC00">
+      </a-plane>
 
-      <!-- Modelo de sala -->
+      <!-- Modelo de sala 
+      
       <a-gltf-model
         id="sala"
         src="#sala3D"
         position="-20 0.1 15"
         scale="1 1 1"
         auto-info-from-textures>
-      </a-gltf-model>
+      </a-gltf-model>-->
 
       <!-- Ejemplos de im\xC3\xA1genes con informaci\xC3\xB3n -->
       <a-image id="img1" class="info-target" src="#painting1" position="-0.48 1.6 -1.05" scale="4.8 3 0"  info-listener="text: Informaci\xC3\xB3n de la imagen 1">
@@ -188,88 +183,88 @@
 </a-image>
 
 <a-image id="img11" class="info-target" src="1455a.jpg"
-         position="12 1.6 9" scale="2.5 2.5 1" rotation="0 46 0"
-         info-listener="text: S/T \nLeopoldo Flores \nTinta sobre servilleta \nDimensiones variables \nAño desconocido">
+         position="15 1.6 -19" scale="2.5 2.5 1" rotation="0 -49 0"
+         info-listener="text: S/T \nLeopoldo Flores \nTinta sobre servilleta \n14 x 13 cm. \nAño 1983">
   <a-text value="Información" class="info-text"
           visible="false" align="left" width="2"
           color="#0c0568" position="0.5 -0.28 0"></a-text>
 </a-image>
 
 <a-image id="img12" class="info-target" src="1455b.jpg"
-         position="-3 1.6 14" scale="2.5 2.5 1" rotation="0 46 0"
-         info-listener="text: S/T \nLeopoldo Flores \nTinta sobre servilleta \nDimensiones variables \nAño desconocido">
+         position="15 1.6 -12" scale="2.5 2.5 1" rotation="0 121 0"
+         info-listener="text: S/T \nLeopoldo Flores \nTinta sobre servilleta \n14 x 13 cm. \nAño 1983">
   <a-text value="Información" class="info-text"
           visible="false" align="left" width="2"
           color="#0c0568" position="0.5 -0.28 0"></a-text>
 </a-image>
 
 <a-image id="img13" class="info-target" src="1293.jpg"
-         position="0 1.6 -7" scale="2.5 2.5 1" rotation="0 46 0"
-         info-listener="text: S/T \nLeopoldo Flores \nTinta sobre servilleta \nDimensiones variables \nAño desconocido">
+         position="3.8 1.6 -0.9" scale="2.5 2.5 1" rotation="0 0 0"
+         info-listener="text: S/T (Nápoles, Italia) \nLeopoldo Flores \nTinta sobre servilleta \n16.5 x 16.5 cm  \n1979">
   <a-text value="Información" class="info-text"
           visible="false" align="left" width="2"
           color="#0c0568" position="0.5 -0.28 0"></a-text>
 </a-image>
 
 <a-image id="img14" class="info-target" src="1439.jpg"
-         position="13 1.6 -12" scale="2.5 2.5 1" rotation="0 46 0"
-         info-listener="text: S/T \nLeopoldo Flores \nTinta sobre servilleta \nDimensiones variables \nAño desconocido">
+         position="-0.15 1.6 13.4" scale="4.8 2.5 1" rotation="0 180 0"
+         info-listener="text: Madrid, España \nLeopoldo Flores \nTinta sobre servilleta \n19.5 x 10 cm. variables \n1983">
   <a-text value="Información" class="info-text"
           visible="false" align="left" width="2"
           color="#0c0568" position="0.5 -0.28 0"></a-text>
 </a-image>
 
 <a-image id="img15" class="info-target" src="1361.jpg"
-         position="-14 1.6 -5" scale="2.5 2.5 1" rotation="0 46 0"
-         info-listener="text: S/T \nLeopoldo Flores \nTinta sobre servilleta \nDimensiones variables \nAño desconocido">
+         position="5.8 1.6 -9.7" scale="2.5 2.7 1" rotation="0 46 0"
+         info-listener="text:  S/T \nLeopoldo Flores \nTinta sobre servilleta \nDimensiones variables \n1988 México, D.F.">
   <a-text value="Información" class="info-text"
           visible="false" align="left" width="2"
           color="#0c0568" position="0.5 -0.28 0"></a-text>
 </a-image>
 
 <a-image id="img16" class="info-target" src="1352a.jpg"
-         position="5 1.6 6" scale="2.5 2.5 1" rotation="0 46 0"
-         info-listener="text: S/T \nLeopoldo Flores \nTinta sobre servilleta \nDimensiones variables \nAño desconocido">
+         position="-1.2 1.6 -22" scale="4.8 2.5 1" rotation="0 0 0"
+         info-listener="text: Hombre con manzana en el estómago\n y tigre en reposo \nLeopoldo Flores \nTinta sobre servilleta \n24.5 x 22.5 cm. \n1982">
   <a-text value="Información" class="info-text"
           visible="false" align="left" width="2"
           color="#0c0568" position="0.5 -0.28 0"></a-text>
 </a-image>
 
 <a-image id="img17" class="info-target" src="1386.jpg"
-         position="-11 1.6 1" scale="2.5 2.5 1" rotation="0 46 0"
-         info-listener="text: S/T \nLeopoldo Flores \nTinta sobre servilleta \nDimensiones variables \nAño desconocido">
+         position="10.7 1.6 -15" scale="2.5 4 1" rotation="0 -40 0"
+         info-listener="text: S/T \nLeopoldo Flores \nTinta sobre servilleta \n13.5 x 25.0 cm \n1981">
   <a-text value="Información" class="info-text"
           visible="false" align="left" width="2"
           color="#0c0568" position="0.5 -0.28 0"></a-text>
 </a-image>
 
 <a-image id="img18" class="info-target" src="1452.jpg"
-         position="9 1.6 -14" scale="2.5 2.5 1" rotation="0 46 0"
-         info-listener="text: S/T \nLeopoldo Flores \nTinta sobre servilleta \nDimensiones variables \nAño desconocido">
+         position="15.4 1.6 -12" scale="2.5 3.2 1" rotation="0 -57 0"
+         info-listener="text: S/T \nLeopoldo Flores \nTinta sobre servilleta \n11.5 x 15 cm. \n1980">
   <a-text value="Información" class="info-text"
           visible="false" align="left" width="2"
           color="#0c0568" position="0.5 -0.28 0"></a-text>
 </a-image>
 
 <a-image id="img19" class="info-target" src="1469.jpg"
-         position="-6 1.6 12" scale="2.5 2.5 1" rotation="0 46 0"
-         info-listener="text: S/T \nLeopoldo Flores \nTinta sobre servilleta \nDimensiones variables \nAño desconocido">
+         position="13 1.6 -8" scale="2.5 2.2 1" rotation="0 -65 0"
+         info-listener="text: S/T \nLeopoldo Flores \nTinta sobre servilleta \n14 x 12.5 cm. \n1984">
   <a-text value="Información" class="info-text"
           visible="false" align="left" width="2"
           color="#0c0568" position="0.5 -0.28 0"></a-text>
 </a-image>
 
 <a-image id="img20" class="info-target" src="1237a_red.jpg"
-         position="2 1.6 -2" scale="2.5 2.5 1" rotation="0 46 0"
-         info-listener="text: S/T \nLeopoldo Flores \nTinta sobre servilleta \nDimensiones variables \nAño desconocido">
+         position="8 1.6 5" scale="2.5 2.7 1" rotation="0 -121 0"
+         info-listener="text: S/T \nLeopoldo Flores \nTinta sobre servilleta \n14 x 12 cms \n1980">
   <a-text value="Información" class="info-text"
           visible="false" align="left" width="2"
           color="#0c0568" position="0.5 -0.28 0"></a-text>
 </a-image>
 
 <a-image id="img21" class="info-target" src="1237b red.jpg"
-         position="-2 1.6 -9" scale="2.5 2.5 1" rotation="0 46 0"
-         info-listener="text: S/T \nLeopoldo Flores \nTinta sobre servilleta \nDimensiones variables \nAño desconocido">
+         position="12 1.6 -0.9" scale="2.5 2.7 1" rotation="0 -92 0"
+         info-listener="text: S/T \nLeopoldo Flores \nTinta sobre servilleta \n14 x 12 cms \n1980">
   <a-text value="Información" class="info-text"
           visible="false" align="left" width="2"
           color="#0c0568" position="0.5 -0.28 0"></a-text>
