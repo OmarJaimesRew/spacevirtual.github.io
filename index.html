@@ -25,7 +25,7 @@
         left: 0;
         width: 100%;
         height: 100%;
-        display: flex;
+        display: none;
         flex-direction: column;
         justify-content: center;
         align-items: center;
@@ -52,9 +52,42 @@
         0% { transform: rotate(0deg); }
         100% { transform: rotate(360deg); }
       }
+
+      #intro-screen {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background: #ffffff;
+        z-index: 10000;
+      }
+
+      #intro-screen img {
+        max-width: 80%;
+        height: auto;
+      }
+
+      #enter-button {
+        margin-top: 20px;
+        padding: 10px 20px;
+        font-size: 1.2em;
+      }
+
+      a-scene {
+        display: none;
+      }
     </style>
   </head>
   <body>
+    <div id="intro-screen">
+      <img src="portada.png" alt="Portada">
+      <button id="enter-button">Entrar</button>
+    </div>
     <div id="loading-screen">
       <img src="portada.png" alt="Portada">
       <div id="loader"></div>
@@ -299,8 +332,23 @@
     </a-scene>
     <script>
       document.addEventListener('DOMContentLoaded', function () {
+        var introEl = document.getElementById('intro-screen');
+        var enterBtn = document.getElementById('enter-button');
+        var sceneEl = document.querySelector('a-scene');
         var modelEl = document.querySelector('#sala');
         var loadingEl = document.getElementById('loading-screen');
+
+        if (enterBtn) {
+          enterBtn.addEventListener('click', function () {
+            if (introEl) { introEl.style.display = 'none'; }
+            if (sceneEl) { sceneEl.style.display = 'block'; }
+            if (loadingEl) {
+              if (modelEl && !modelEl.hasLoaded) { loadingEl.style.display = 'flex'; }
+              else { loadingEl.style.display = 'none'; }
+            }
+          });
+        }
+
         if (!modelEl || !loadingEl) { return; }
         var hide = function () { loadingEl.style.display = 'none'; };
         if (modelEl.hasLoaded) { hide(); }
