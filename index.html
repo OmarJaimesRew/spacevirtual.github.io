@@ -53,10 +53,8 @@
     </div>
   <a-scene vr-mode-ui="enabled: false">
 
-      <!-- Assets: Modelo GLB -->
+      <!-- Assets: Imágenes -->
       <a-assets>
-        <!--<a-asset-item id="sala3D" src="virtual1.glb"></a-asset-item>
-         Lista de assets extraídos del GLB -->
 <img id="painting1" src="PORTADA.jpg">
 <img id="painting2" src="1225 red.jpg">
 <img id="painting3" src="1281.jpg">
@@ -291,12 +289,12 @@
     </a-scene>
     <script>
       document.addEventListener('DOMContentLoaded', function () {
-        var modelEl = document.querySelector('#sala');
         var loadingEl = document.getElementById('loading-screen');
-        if (!modelEl || !loadingEl) { return; }
+        var assetsEl = document.querySelector('a-assets');
+        if (!loadingEl || !assetsEl) { return; }
         var hide = function () { loadingEl.style.display = 'none'; };
-        if (modelEl.hasLoaded) { hide(); }
-        else { modelEl.addEventListener('model-loaded', hide); }
+        if (assetsEl.hasLoaded) { hide(); }
+        else { assetsEl.addEventListener('loaded', hide); }
       });
     </script>
   </body>
