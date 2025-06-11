@@ -32,7 +32,7 @@
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        background:color; "rgba(255, 0, 255, 0.5)"";
+        background:color #ffffff;
         z-index: 9999;
       }
 
@@ -67,7 +67,7 @@
         justify-content: center;
         align-items: center;
         background: #ffffff;
-        z-index: 10000;
+        z-index: 10005;
       }
 
       #intro-screen img {
@@ -96,7 +96,7 @@
       #help-button {
         position: absolute;
         top: 10px;
-        right: 10px;
+        left: 10px;
         z-index: 10001;
         padding: 6px 12px;
         background-color: #865905;
@@ -113,7 +113,7 @@
         left: 0;
         width: 100%;
         height: 100%;
-        background: rgba(0, 0, 0, 0.8);
+        background: rgba(0, 0, 0, 0.85);
         z-index: 10002;
         justify-content: center;
         align-items: center;
@@ -121,13 +121,13 @@
 
       #help-overlay img {
         max-width: 90%;
-        max-height: 90%;
+        max-height: auto;
       }
 
       #close-help {
         position: absolute;
         top: 10px;
-        right: 10px;
+        left: 10px;
         background-color: #865905;
         color: white;
         border: none;
@@ -151,7 +151,7 @@
     </div>
     <button id="help-button">Ayuda</button>
     <div id="help-overlay">
-      <img src="portada.png" alt="Ayuda">
+      <img src="ayuda.png" alt="Ayuda">
       <button id="close-help">Cerrar</button>
     </div>
     <a-scene>
