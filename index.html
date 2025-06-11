@@ -88,9 +88,51 @@
       }
 
       #enter-button:hover {
-        background-color:#497051; 
+        background-color:#497051;
         scale: 1.05;
 
+      }
+
+      #help-button {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        z-index: 10001;
+        padding: 6px 12px;
+        background-color: #865905;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+
+      #help-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        z-index: 10002;
+        justify-content: center;
+        align-items: center;
+      }
+
+      #help-overlay img {
+        max-width: 90%;
+        max-height: 90%;
+      }
+
+      #close-help {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background-color: #865905;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
       }
 
       a-scene {
@@ -106,6 +148,11 @@
     <div id="loading-screen">
       <img src="portada.png" alt="Portada">
       <div id="loader"></div>
+    </div>
+    <button id="help-button">Ayuda</button>
+    <div id="help-overlay">
+      <img src="portada.png" alt="Ayuda">
+      <button id="close-help">Cerrar</button>
     </div>
     <a-scene>
 
@@ -352,6 +399,9 @@
         var sceneEl = document.querySelector('a-scene');
         var modelEl = document.querySelector('#sala');
         var loadingEl = document.getElementById('loading-screen');
+        var helpBtn = document.getElementById('help-button');
+        var helpOverlay = document.getElementById('help-overlay');
+        var closeHelp = document.getElementById('close-help');
 
         if (enterBtn) {
           enterBtn.addEventListener('click', function () {
@@ -361,6 +411,17 @@
               if (modelEl && !modelEl.hasLoaded) { loadingEl.style.display = 'flex'; }
               else { loadingEl.style.display = 'none'; }
             }
+          });
+        }
+
+        if (helpBtn && helpOverlay) {
+          helpBtn.addEventListener('click', function () {
+            helpOverlay.style.display = 'flex';
+          });
+        }
+        if (closeHelp && helpOverlay) {
+          closeHelp.addEventListener('click', function () {
+            helpOverlay.style.display = 'none';
           });
         }
 
