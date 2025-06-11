@@ -6,8 +6,11 @@
 
     <!-- A-Frame -->
     <script src="libs/aframe.min.js"></script>
+    
     <script src="https://cdn.jsdelivr.net/npm/aframe-virtual-joystick/dist/aframe-virtual-joystick.js"></script>
-  
+    
+    <script src="https://fonts.googleapis.com/css2?family=Alex+Brush&display=swap"></script>
+    <script src="https://fonts.googleapis.com/css2?family=Caveat+Brush&display=swap"></script>
   
     <!-- Controles para dispositivos m\xC3\xB3viles 
     <script src="libs/aframe-extras.min.js"></script>
@@ -73,6 +76,7 @@
       }
 
       #enter-button {
+       font-family: 'Caveat Brush', cursive;
         margin-top: 20px;
         padding: 10px 20px;
         font-size: 1.2em;
@@ -80,7 +84,13 @@
         color: white;
         border: none;
         border-radius: 5px;
-         cursor: pointer; 
+         cursor: pointer;  
+      }
+
+      #enter-button:hover {
+        background-color:#497051; 
+        scale: 1.05;
+
       }
 
       a-scene {
