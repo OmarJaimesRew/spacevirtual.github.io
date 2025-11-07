@@ -496,6 +496,8 @@
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
     controls.enablePan = true;
+    controls.zoomToCursor = true;
+    controls.zoomSpeed = 0.55;
     controls.minDistance = 1.2;
     controls.maxDistance = 120;
 
@@ -898,6 +900,10 @@ function buildMediaEl(media){
       pointerDown = null;
       updateHUD();
     });
+
+    renderer.domElement.addEventListener('wheel', e => {
+      toNDC(e);
+    }, { passive: true });
 
     function onResize(){
       const w = window.innerWidth, h = window.innerHeight;
