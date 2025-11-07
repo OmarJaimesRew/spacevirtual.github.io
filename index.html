@@ -733,10 +733,6 @@ function buildMediaEl(media){
           ovText.appendChild(p);
         });
 
-        const pNote = document.createElement('p');
-        pNote.textContent = 'Nodo conceptual más luminoso: máxima sintiencia implementada y máxima cercanía científica.';
-        ovText.appendChild(pNote);
-
         ovId.textContent = `ID: ${id}`;
       } else {
         const data = WORKS.find(w=>w.id===id);
