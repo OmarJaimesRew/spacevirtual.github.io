@@ -29,8 +29,34 @@
     body{margin:0;background:var(--bg);color:var(--fg);font-family:system-ui,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial,sans-serif;overflow:hidden}
     canvas{display:block;position:fixed;inset:0}
 
+    #intro{
+      position:fixed;
+      top:0;
+      left:0;
+      right:0;
+      z-index:6;
+      background:rgba(15,23,42,.88);
+      backdrop-filter:blur(8px);
+      border-bottom:1px solid var(--line);
+      padding:14px 20px 12px;
+      font-size:14px;
+      line-height:1.4;
+      box-sizing:border-box;
+    }
+    #intro h1{
+      margin:0;
+      font-size:18px;
+      line-height:1.2;
+      color:var(--fg);
+    }
+    #intro p{
+      margin:6px 0 0;
+      color:var(--muted);
+      max-width:960px;
+    }
+
     .help{
-      position:fixed;left:12px;top:12px;z-index:5;
+      position:fixed;left:12px;top:108px;z-index:5;
       background:rgba(15,23,42,.7);backdrop-filter:blur(6px);
       border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:12px;color:var(--muted);
       user-select:none;max-width:min(640px,calc(100% - 24px))
@@ -100,7 +126,7 @@
 
     /* HUD fija para datos de navegación */
     .hud{
-      position:fixed;left:12px;top:120px;z-index:5;
+      position:fixed;left:12px;top:210px;z-index:5;
       background:rgba(15,23,42,.8);backdrop-filter:blur(6px);
       border:1px solid var(--line);border-radius:10px;padding:8px 10px;font-size:12px;color:var(--muted);
       min-width:260px
@@ -111,7 +137,7 @@
 
     /* Panel de controles */
     .panel{
-      position:fixed;left:12px;top:220px;z-index:5;
+      position:fixed;left:12px;top:310px;z-index:5;
       background:rgba(15,23,42,.8);backdrop-filter:blur(6px);
       border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:12px;color:var(--muted);
       min-width:280px
@@ -124,6 +150,10 @@
   </style>
 </head>
 <body>
+  <header id="intro">
+    <h1>Ensayo · Estética Sintiente — ejes invisibles</h1>
+    <p>Explora un mapa 3D de obras, teorías y tecnologías. Cada punto es un caso. X: año · Y: grado sintiente · Z: cercanía científica. Haz clic en un nodo para leer.</p>
+  </header>
   <div class="help">
     <b>Ensayo · Estética Sintiente</b> — ejes invisibles.<br/>
     <b>Color</b>: X de azul→rosa (tiempo), Y controla luminosidad, Z posición científica (profundidad).<br/>
@@ -181,7 +211,7 @@
 
   <div id="tooltip" class="tooltip" style="display:none"></div>
 
-  <div class="tests" id="tests">Pruebas: <span>pendientes…</span></div>
+  <div class="tests" id="tests">Pruebas automatizadas: <span>en desarrollo</span></div>
 
   <canvas id="webgl"></canvas>
 
