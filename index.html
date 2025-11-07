@@ -22,8 +22,6 @@
       --muted:#94a3b8;   /* ayudas */
       --overlay:#0f172a; /* fondo overlay */
       --line:#1f2937;    /* bordes */
-      --ok:#22c55e;      /* tests ok */
-      --bad:#ef4444;     /* tests fail */
     }
     html,body{height:100%}
     body{margin:0;background:var(--bg);color:var(--fg);font-family:system-ui,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial,sans-serif;overflow:hidden}
@@ -121,14 +119,6 @@
 
     .tooltip{position:fixed;z-index:4;padding:4px 6px;font-size:11px;color:#cbd5e1;background:#0b1220cc;border:1px solid var(--line);border-radius:6px;transform:translate(-50%,-120%);pointer-events:none}
 
-    .tests{
-      position:fixed;left:12px;bottom:12px;z-index:6;font-size:12px;color:var(--muted);
-      background:rgba(15,23,42,.7);border:1px solid var(--line);border-radius:10px;padding:8px 10px;max-width:60ch
-    }
-    .tests b{color:var(--fg)}
-    .tpass{color:var(--ok)}
-    .tfail{color:var(--bad)}
-
     /* HUD fija para datos de navegación */
     .hud{
       position:fixed;left:12px;top:210px;z-index:5;
@@ -210,8 +200,6 @@
 
 
   <div id="tooltip" class="tooltip" style="display:none"></div>
-
-  <div class="tests" id="tests">Pruebas automatizadas: <span>en desarrollo</span></div>
 
   <canvas id="webgl"></canvas>
 
@@ -928,27 +916,6 @@ function buildMediaEl(media){
     }
 
     // ===================== TESTS BÁSICOS =====================
-    const testsBox = document.getElementById('tests');
-    function tlog(label, ok){
-      if(!testsBox) return;
-      const line = document.createElement('div');
-      line.className = ok ? 'tpass' : 'tfail';
-      line.textContent = (ok ? '✔ ' : '✖ ') + label;
-      testsBox.appendChild(line);
-    }
-
-    (function selfTests(){
-      if(!testsBox) return;
-      testsBox.innerHTML = '<b>Pruebas</b>:';
-      tlog('THREE cargado', !!THREE);
-      tlog('Renderer ok', !!renderer && !!renderer.domElement);
-      tlog('Escena lista', !!scene && !!camera);
-      tlog('Nodos generados', nodes.length === WORKS.length);
-      tlog('Centro presente', !!center);
-      tlog('Raycaster listo', !!raycaster);
-      tlog('Overlay presente', !!overlay);
-    })();
-
     // Overlay inicial: nodo principal
     openOverlay('centro');
 
