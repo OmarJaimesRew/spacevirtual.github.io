@@ -496,10 +496,9 @@
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
     controls.enablePan = true;
-    controls.zoomToCursor = true;
-    controls.zoomSpeed = 0.5;
-    controls.minDistance = 12;
-    controls.maxDistance = 100;
+    controls.enableZoom = false; // gestionamos el zoom manualmente para evitar saltos
+    controls.minDistance = 1.2;
+    controls.maxDistance = 120;
 
     scene.add(new THREE.AmbientLight(0xffffff, 0.4));
     const dir = new THREE.DirectionalLight(0xffffff, 0.4); dir.position.set(3,5,6); scene.add(dir);
@@ -672,6 +671,17 @@
     const raycaster = new THREE.Raycaster();
     const mouse = new THREE.Vector2();
 
+    // Estado y utilidades para un zoom continuo compatible con Edge/Chrome
+    const zoomState = {
+      current: camera.position.distanceTo(controls.target),
+      target: camera.position.distanceTo(controls.target)
+    };
+    const ZOOM_SENSITIVITY = 0.0012;
+    const zoomPlane = new THREE.Plane();
+    const zoomPoint = new THREE.Vector3();
+    const zoomDirection = new THREE.Vector3();
+    const zoomShift = new THREE.Vector3();
+
     function toNDC(event){
       const rect = renderer.domElement.getBoundingClientRect();
       mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
@@ -681,6 +691,33 @@
       raycaster.setFromCamera(mouse, camera);
       const objects = [center, ...nodes];
       return raycaster.intersectObjects(objects, false);
+    }
+
+    function normalizeWheelDelta(event){
+      let delta = event.deltaY;
+      if(event.deltaMode === 1) delta *= 16;            // DOM_DELTA_LINE
+      else if(event.deltaMode === 2) delta *= 320;      // DOM_DELTA_PAGE aprox
+      return Math.max(-1200, Math.min(1200, delta));
+    }
+
+    function projectCursorOnTarget(){
+      camera.getWorldDirection(zoomDirection);
+      zoomPlane.setFromNormalAndCoplanarPoint(zoomDirection, controls.target);
+      raycaster.setFromCamera(mouse, camera);
+      if(raycaster.ray.intersectPlane(zoomPlane, zoomPoint)){
+        return zoomPoint;
+      }
+      return null;
+    }
+
+    function applySmoothZoom(delta){
+      if(!isFinite(zoomState.target)) return;
+      const smoothing = 1 - Math.exp(-8 * delta);
+      zoomState.current = THREE.MathUtils.lerp(zoomState.current, zoomState.target, smoothing);
+      zoomDirection.copy(camera.position).sub(controls.target);
+      if(zoomDirection.lengthSq() < 1e-6) zoomDirection.set(0, 0, 1);
+      zoomDirection.normalize().multiplyScalar(zoomState.current);
+      camera.position.copy(controls.target).add(zoomDirection);
     }
 
     function showTooltip(obj, event){
@@ -903,7 +940,24 @@ function buildMediaEl(media){
 
     renderer.domElement.addEventListener('wheel', e => {
       toNDC(e);
-    }, { passive: true });
+      const rawDelta = normalizeWheelDelta(e);
+      if(rawDelta === 0) return;
+      e.preventDefault();
+      e.stopImmediatePropagation();
+
+      const focusPoint = projectCursorOnTarget();
+      const prevDistance = zoomState.target;
+      let nextDistance = prevDistance * Math.exp(rawDelta * ZOOM_SENSITIVITY);
+      nextDistance = Math.max(controls.minDistance, Math.min(controls.maxDistance, nextDistance));
+
+      if(focusPoint && prevDistance > 1e-4){
+        zoomShift.copy(focusPoint).sub(controls.target);
+        const ratio = 1 - (nextDistance / prevDistance);
+        controls.target.add(zoomShift.multiplyScalar(ratio));
+      }
+
+      zoomState.target = nextDistance;
+    }, { passive: false });
 
     function onResize(){
       const w = window.innerWidth, h = window.innerHeight;
@@ -977,7 +1031,9 @@ function buildMediaEl(media){
         }
       }
 
+      applySmoothZoom(delta);
       controls.update();
+      zoomState.current = camera.position.distanceTo(controls.target);
       updateHUD();
       composer.render();
       requestAnimationFrame(animate);
