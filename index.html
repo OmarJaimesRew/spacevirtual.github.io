@@ -32,20 +32,34 @@
     body::-webkit-scrollbar-thumb:hover,.ov-scroll::-webkit-scrollbar-thumb:hover{background-color:#64748b}
     canvas{display:block;position:fixed;inset:0}
 
-    #intro{
+    .left-rail{
       position:fixed;
-      top:0;
-      left:0;
-      right:auto;
+      top:18px;
+      left:18px;
+      bottom:18px;
+      width:clamp(260px,32vw,420px);
+      max-width:calc(100% - 36px);
+      display:flex;
+      flex-direction:column;
+      gap:clamp(14px,3vh,32px);
       z-index:6;
-      width:30vw;
+      pointer-events:none;
+    }
+    .left-rail > *{
+      pointer-events:auto;
+      width:100%;
+      box-sizing:border-box;
+    }
+    #intro{
       background:rgba(15,23,42,.88);
       backdrop-filter:blur(8px);
-      border-bottom:1px solid var(--line);
-      padding:14px 20px 12px;
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:16px 20px 14px;
       font-size:14px;
       line-height:1.4;
       box-sizing:border-box;
+      box-shadow:0 12px 28px -18px #000000aa;
     }
     #intro h1{
       margin:0;
@@ -60,14 +74,13 @@
     }
 
     .help{
-      position:fixed;left:12px;top:108px;z-index:5;
       font-size:12px;color:var(--muted);
-      user-select:none;max-width:min(640px,calc(100% - 24px));
-      padding:0;
-      background:none;
-      border:none;
-      border-radius:0;
-      backdrop-filter:none;
+      user-select:none;
+      padding:12px 16px;
+      background:rgba(15,23,42,.72);
+      border:1px solid var(--line);
+      border-radius:12px;
+      backdrop-filter:blur(6px);
     }
     .help b{color:var(--fg)}
 
@@ -126,7 +139,6 @@
 
     /* HUD fija para datos de navegación */
     .hud{
-      position:fixed;left:12px;top:210px;z-index:5;
       background:rgba(15,23,42,.8);backdrop-filter:blur(6px);
       border:1px solid var(--line);border-radius:10px;padding:8px 10px;font-size:12px;color:var(--muted);
       min-width:260px
@@ -137,7 +149,6 @@
 
     /* Panel de controles */
     .panel{
-      position:fixed;left:12px;top:310px;z-index:5;
       background:rgba(15,23,42,.8);backdrop-filter:blur(6px);
       border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:12px;color:var(--muted);
       min-width:280px
@@ -150,43 +161,45 @@
   </style>
 </head>
 <body>
-  <header id="intro">
-    <h1>Estética Sintiente</h1>
-    <p>Explora un mapa 3D de obras, teorías y tecnologías. Cada punto es un caso.<br>X: año<br>Y: grado sintiente<br>Z: cercanía científica.<br>Haz clic en un nodo para leer.</p>
-  </header>
-  <div class="help"></div>
+  <div class="left-rail">
+    <header id="intro">
+      <h1>Estética Sintiente</h1>
+      <p>Explora un mapa 3D de obras, teorías y tecnologías. Cada punto es un caso.<br>X: año<br>Y: grado sintiente<br>Z: cercanía científica.<br>Haz clic en un nodo para leer.</p>
+    </header>
+    <div class="help"></div>
 
-  <!-- HUD fija -->
-  <div class="hud" id="hud">
-    <div class="row"><b>Navegación</b><span id="hud-mode">volumen</span></div>
-    <div class="row">X año:<code id="hud-x">—</code></div>
-    <div class="row">Y índice:<code id="hud-y">—</code></div>
-    <div class="row">Z ciencia:<code id="hud-z">—</code></div>
-    <div class="row">Cámara:<code id="hud-cam">—</code></div>
-  </div>
+    <!-- HUD fija -->
+    <div class="hud" id="hud">
+      <div class="row"><b>Navegación</b><span id="hud-mode">volumen</span></div>
+      <div class="row">X año:<code id="hud-x">—</code></div>
+      <div class="row">Y índice:<code id="hud-y">—</code></div>
+      <div class="row">Z ciencia:<code id="hud-z">—</code></div>
+      <div class="row">Cámara:<code id="hud-cam">—</code></div>
+    </div>
 
-  <!-- Panel de ajustes en vivo -->
-  <div class="panel" id="panel">
-    <h3>Ajustes de color y brillo</h3>
-    <div class="ctrl">
-      <label for="ctl-floor">Piso cromático (COLOR_FLOOR)</label>
-      <code id="val-floor">0.05</code>
-      <input type="range" id="ctl-floor" min="0" max="0.30" step="0.01" value="0.05">
-    </div>
-    <div class="ctrl">
-      <label for="ctl-bbase">Brillo base</label>
-      <code id="val-bbase">0.15</code>
-      <input type="range" id="ctl-bbase" min="0" max="0.60" step="0.01" value="0.15">
-    </div>
-    <div class="ctrl">
-      <label for="ctl-bgain">Ganancia de brillo</label>
-      <code id="val-bgain">1.20</code>
-      <input type="range" id="ctl-bgain" min="0" max="2.00" step="0.05" value="1.20">
-    </div>
-    <div class="ctrl">
-      <label for="ctl-bgamma">Gamma de brillo</label>
-      <code id="val-bgamma">1.00</code>
-      <input type="range" id="ctl-bgamma" min="0.20" max="3.00" step="0.05" value="1.00">
+    <!-- Panel de ajustes en vivo -->
+    <div class="panel" id="panel">
+      <h3>Ajustes de color y brillo</h3>
+      <div class="ctrl">
+        <label for="ctl-floor">Piso cromático (COLOR_FLOOR)</label>
+        <code id="val-floor">0.05</code>
+        <input type="range" id="ctl-floor" min="0" max="0.30" step="0.01" value="0.05">
+      </div>
+      <div class="ctrl">
+        <label for="ctl-bbase">Brillo base</label>
+        <code id="val-bbase">0.15</code>
+        <input type="range" id="ctl-bbase" min="0" max="0.60" step="0.01" value="0.15">
+      </div>
+      <div class="ctrl">
+        <label for="ctl-bgain">Ganancia de brillo</label>
+        <code id="val-bgain">1.20</code>
+        <input type="range" id="ctl-bgain" min="0" max="2.00" step="0.05" value="1.20">
+      </div>
+      <div class="ctrl">
+        <label for="ctl-bgamma">Gamma de brillo</label>
+        <code id="val-bgamma">1.00</code>
+        <input type="range" id="ctl-bgamma" min="0.20" max="3.00" step="0.05" value="1.00">
+      </div>
     </div>
   </div>
 
