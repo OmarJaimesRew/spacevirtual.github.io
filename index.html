@@ -1,0 +1,952 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Nube 3D · Ensayo sobre Estética Sintiente</title>
+
+  <!-- Import Map: permite usar "three" como specifier en navegador -->
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://unpkg.com/three@0.160.0/build/three.module.js"
+      }
+    }
+  </script>
+
+  <style>
+    :root{
+      --bg:#0b0d12;      /* fondo */
+      --fg:#e5e7eb;      /* texto base */
+      --brand:#f59e0b;   /* punto central */
+      --muted:#94a3b8;   /* ayudas */
+      --overlay:#0f172a; /* fondo overlay */
+      --line:#1f2937;    /* bordes */
+      --ok:#22c55e;      /* tests ok */
+      --bad:#ef4444;     /* tests fail */
+    }
+    html,body{height:100%}
+    body{margin:0;background:var(--bg);color:var(--fg);font-family:system-ui,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial,sans-serif;overflow:hidden}
+    canvas{display:block;position:fixed;inset:0}
+
+    .help{
+      position:fixed;left:12px;top:12px;z-index:5;
+      background:rgba(15,23,42,.7);backdrop-filter:blur(6px);
+      border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:12px;color:var(--muted);
+      user-select:none;max-width:min(640px,calc(100% - 24px))
+    }
+    .help b{color:var(--fg)}
+
+    #overlay{
+      position:fixed;
+      right:18px;
+      top:18px;
+      bottom:18px;
+      z-index:10;
+      width:min(480px,calc(100% - 36px));
+      background:rgba(15,23,42,.72);
+      backdrop-filter:blur(6px);
+      border:1px solid var(--line);
+      border-radius:14px;
+      color:var(--fg);
+      padding:14px 16px;
+      display:none;
+      display:flex;
+      flex-direction:column;
+      box-sizing:border-box;
+      overflow:hidden;
+    }
+    #overlay.show{display:flex}
+    #overlay header{display:flex;gap:8px;align-items:center;margin-bottom:8px}
+    #overlay h2{font-size:18px;line-height:1.2;margin:0;flex:1}
+    #overlay .close {
+  display:none;
+}
+
+    #overlay .meta{font-size:12px;color:var(--muted);margin:0 0 10px}
+    #overlay .content{font-size:14px;line-height:1.45;text-align:justify}
+    #overlay .media{margin-top:10px;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+    
+    #overlay .media-block{
+  width:100%;
+}
+
+#overlay .media-caption{
+  font-size:14px;          /* igual que .content */
+  color:var(--fg);         /* mismo color de texto principal */
+  padding:6px 0 0;
+  line-height:1.45;        /* igual que .content */
+  background:transparent;  /* sin caja distinta */
+  border-top:none;
+  text-align:justify;      /* mismo alineado que el texto de arriba */
+}
+
+
+
+
+    #overlay img, #overlay video, #overlay audio, #overlay iframe{display:block;width:100%;height:auto;background:#000}
+    #overlay iframe{aspect-ratio:16/9;border:0}
+    .ov-scroll{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;}#ov-media{width:100%;max-width:100%;overflow:hidden;}#overlay img,#overlay video,#overlay audio,#overlay iframe{display:block;width:100%;max-width:100%;height:auto;background:#000;}#overlay iframe{aspect-ratio:16/9;border:0;}
+
+    .tooltip{position:fixed;z-index:4;padding:4px 6px;font-size:11px;color:#cbd5e1;background:#0b1220cc;border:1px solid var(--line);border-radius:6px;transform:translate(-50%,-120%);pointer-events:none}
+
+    .tests{
+      position:fixed;left:12px;bottom:12px;z-index:6;font-size:12px;color:var(--muted);
+      background:rgba(15,23,42,.7);border:1px solid var(--line);border-radius:10px;padding:8px 10px;max-width:60ch
+    }
+    .tests b{color:var(--fg)}
+    .tpass{color:var(--ok)}
+    .tfail{color:var(--bad)}
+
+    /* HUD fija para datos de navegación */
+    .hud{
+      position:fixed;left:12px;top:120px;z-index:5;
+      background:rgba(15,23,42,.8);backdrop-filter:blur(6px);
+      border:1px solid var(--line);border-radius:10px;padding:8px 10px;font-size:12px;color:var(--muted);
+      min-width:260px
+    }
+    .hud b{color:var(--fg)}
+    .hud .row{display:flex;justify-content:space-between;gap:10px}
+    .hud code{color:#cbd5e1}
+
+    /* Panel de controles */
+    .panel{
+      position:fixed;left:12px;top:220px;z-index:5;
+      background:rgba(15,23,42,.8);backdrop-filter:blur(6px);
+      border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:12px;color:var(--muted);
+      min-width:280px
+    }
+    .panel h3{margin:0 0 6px;font-size:13px;color:var(--fg)}
+    .ctrl{display:grid;grid-template-columns:1fr auto;gap:6px 10px;align-items:center;margin:6px 0}
+    .ctrl label{color:var(--fg)}
+    .ctrl input[type="range"]{grid-column:1/-1;width:100%}
+    .ctrl code{padding:2px 6px;border:1px solid var(--line);border-radius:6px;color:#cbd5e1}
+  </style>
+</head>
+<body>
+  <div class="help">
+    <b>Ensayo · Estética Sintiente</b> — ejes invisibles.<br/>
+    <b>Color</b>: X de azul→rosa (tiempo), Y controla luminosidad, Z posición científica (profundidad).<br/>
+    X = año (tiempo). Y = «sintiencia implementada». Z = cercanía científica.
+    Ratón para rotar, rueda para zoom, botón derecho para mover. Clic en un nodo abre overlay. <b>Esc</b> cierra.
+  </div>
+
+  <!-- HUD fija -->
+  <div class="hud" id="hud">
+    <div class="row"><b>Navegación</b><span id="hud-mode">volumen</span></div>
+    <div class="row">X año:<code id="hud-x">—</code></div>
+    <div class="row">Y índice:<code id="hud-y">—</code></div>
+    <div class="row">Z ciencia:<code id="hud-z">—</code></div>
+    <div class="row">Cámara:<code id="hud-cam">—</code></div>
+  </div>
+
+  <!-- Panel de ajustes en vivo -->
+  <div class="panel" id="panel">
+    <h3>Ajustes de color y brillo</h3>
+    <div class="ctrl">
+      <label for="ctl-floor">Piso cromático (COLOR_FLOOR)</label>
+      <code id="val-floor">0.05</code>
+      <input type="range" id="ctl-floor" min="0" max="0.30" step="0.01" value="0.05">
+    </div>
+    <div class="ctrl">
+      <label for="ctl-bbase">Brillo base</label>
+      <code id="val-bbase">0.15</code>
+      <input type="range" id="ctl-bbase" min="0" max="0.60" step="0.01" value="0.15">
+    </div>
+    <div class="ctrl">
+      <label for="ctl-bgain">Ganancia de brillo</label>
+      <code id="val-bgain">1.20</code>
+      <input type="range" id="ctl-bgain" min="0" max="2.00" step="0.05" value="1.20">
+    </div>
+    <div class="ctrl">
+      <label for="ctl-bgamma">Gamma de brillo</label>
+      <code id="val-bgamma">1.00</code>
+      <input type="range" id="ctl-bgamma" min="0.20" max="3.00" step="0.05" value="1.00">
+    </div>
+  </div>
+
+<div id="overlay" role="dialog" aria-modal="true" aria-hidden="true">
+  <header>
+    <h2 id="ov-title">Título</h2>
+    <button class="close" id="ov-close" aria-label="Cerrar">×</button>
+  </header>
+  <div class="ov-scroll" id="ov-scroll">
+    <p class="meta" id="ov-id">—</p>
+    <div class="content" id="ov-text"></div>
+    <div class="media" id="ov-media"></div>
+    <div class="media-caption" id="ov-caption"></div>
+  </div>
+</div>
+
+
+  <div id="tooltip" class="tooltip" style="display:none"></div>
+
+  <div class="tests" id="tests">Pruebas: <span>pendientes…</span></div>
+
+  <canvas id="webgl"></canvas>
+
+  <script type="module">
+    import * as THREE from 'three';
+    import { OrbitControls } from 'https://unpkg.com/three@0.160.0/examples/jsm/controls/OrbitControls.js';
+    import { EffectComposer } from 'https://unpkg.com/three@0.160.0/examples/jsm/postprocessing/EffectComposer.js';
+    import { RenderPass } from 'https://unpkg.com/three@0.160.0/examples/jsm/postprocessing/RenderPass.js';
+    import { UnrealBloomPass } from 'https://unpkg.com/three@0.160.0/examples/jsm/postprocessing/UnrealBloomPass.js';
+
+    // ===================== PARÁMETROS DE ESCALA =====================
+    const WEIGHTS = { sensors:0.20, estado:0.25, adapt:0.30, autonomia:0.15, afecto:0.10 }; // suma = 1
+    const TECH_BOOST = 0.20; // solicitado
+    
+
+
+    // ===================== DATASET =====================
+    const WORKS = [
+      {
+        id:'w01',
+        title:'CYSP-1',
+        author:'Nicolas Schöffer',
+        year:1956,
+        sci:0.80,
+        features:{ sensors:0.60, estado:0.20, adapt:0.20, autonomia:0.40, afecto:0.40 },
+        text:`CYSP-1 introduce una escultura gobernada por sensores fotoeléctricos y control cibernético que responde en tiempo real a luz y sonido, desplazando la obra del objeto fijo al sistema reactivo. Esta autonomía regulada frente al entorno inaugura una gramática de sensibilidad maquínica que fundamenta la hipótesis de una estética sintiente.`,
+      media:{
+  type: 'iframe',
+  src: 'https://www.youtube.com/embed/u8nxktU1R6E?si=Q1L-JygnGzWg4qFJ',
+  width: 560,
+  height: 315,
+  title: 'YouTube video player',
+  referrerPolicy: 'strict-origin-when-cross-origin'
+},
+
+
+        caption: 'CYSP-1 instala la noción de escultura como sistema cibernético capaz de percibir y modular su comportamiento según luz y sonido. Este pasaje del volumen estable al ensamblaje sensorial-motriz introduce una primera figura de “atención” maquínica, donde la obra no representa la variación ambiental sino que la incorpora como condición de existencia. Técnicamente articula control automático, realimentación y movilidad; filosóficamente, erosiona la frontera entre objeto inerte y organismo regulado; artísticamente, funda un paradigma en el que la sensibilidad se ejerce mediante lógica y hardware, anticipando la estética sintiente.',
+
+
+      },
+      {
+        id:'w02',
+        title:'Colloquy of Mobiles',
+        author:'Gordon Pask',
+        year:1968,
+        sci:0.70,
+        features:{ sensors:0.50, estado:0.40, adapt:0.50, autonomia:0.60, afecto:0.60 },
+        text:`Colloquy of Mobiles configura una ecología de módulos luminosos conectados por lazos de realimentación donde máquinas y público co-determinan el comportamiento del sistema. Al desplazar la obra hacia una lógica de conversación distribuida, sitúa la estética sintiente como problema de redes cognitivas que aprenden y se ajustan en tiempo real.`,
+        media:{type:'iframe', src:'https://www.youtube.com/embed/aWx3neamYAw'},
+        caption: 'Este entorno cibernético distribuye la inteligencia en móviles luminosos que interactúan entre sí y con el público mediante bucles de feedback. Su aporte técnico reside en formalizar relaciones adaptativas y aprendizaje en un sistema artístico; su aporte filosófico, en concebir la obra como conversación entre agentes, humanos y no humanos, donde ningún polo agota el sentido. Así, Colloquy of Mobiles desplaza la estética de la forma al proceso dialógico y se vuelve pieza clave para entender la estética sintiente como red comunicante.',
+      },
+      {
+        id:'w03',
+        title:'The Senster',
+        author:'Edward Ihnatowicz',
+        year:1970,
+        sci:0.85,
+        features:{ sensors:0.80, estado:0.40, adapt:0.50, autonomia:0.70, afecto:0.60 },
+        text:`The Senster introduce un cuerpo robótico de gran escala que orienta sus movimientos según patrones de sonido y presencia, generando la impresión de curiosidad, miedo o aproximación. Su ingeniería de sensores y control continuo produce una figura cuasi etológica que aporta a la estética sintiente un modelo de atención técnica encarnada.`,
+        media:{type:'iframe', src:'https://www.youtube.com/embed/wY85GrYGnyw'},
+        caption: 'The Senster configura un cuerpo robótico que orienta sus gestos según patrones de presencia y sonido, produciendo la impresión de curiosidad, cautela o rechazo. La precisión técnica de sus sensores y algoritmos de control le permite sostener un comportamiento coherente en el tiempo, habilitando la proyección de una mínima interioridad. La pieza introduce un régimen de lectura etológica de la máquina: no solo responde, parece evaluar. Con ello contribuye a la estética sintiente como imaginación de organismos técnicos afectables.',
+      },
+      {
+        id:'w04',
+        title:'Videoplace',
+        author:'Myron Krueger',
+        year:1975,
+        sci:0.60,
+        features:{ sensors:0.60, estado:0.30, adapt:0.30, autonomia:0.40, afecto:0.60 },
+        text:`Videoplace establece un entorno donde la silueta del participante es capturada, procesada y reinscrita como forma gráfica interactiva, disolviendo la frontera entre espectador y pantalla. Al concebir la obra como espacio relacional sensible al cuerpo, aporta un marco proto-estético sintiente centrado en la co-presencia tecno-perceptiva.`,
+        media:{type:'iframe', src:'https://www.youtube.com/embed/dmmxVA5xhuo'},
+        caption: 'Videoplace formula un “espacio relacional” donde el cuerpo es digitalizado y reinscrito como figura interactiva. Su relevancia técnica está en la visión computacional temprana y la interacción sin contacto; su relevancia filosófica, en entender al espectador como parte constitutiva del sistema perceptivo de la obra. Al hacer del entorno un campo de co-percepción entre humano y computador, anticipa una estética sintiente concebida como topología compartida, no como atributo exclusivo de un objeto.',
+      },
+      {
+        id:'w05',
+        title:'Very Nervous System',
+        author:'David Rokeby',
+        year:1986,
+        sci:0.65,
+        features:{ sensors:0.70, estado:0.40, adapt:0.50, autonomia:0.50, afecto:0.70 },
+        text:`Very Nervous System traduce de forma continua el movimiento en sonido mediante sensores y algoritmos personalizados, de modo que el espacio responde como una entidad nerviosa amplificada. Esta escucha computacional extrema reformula la relación cuerpo-medio y refuerza la noción de estética sintiente como circuito de percepción recíproca.`,
+        media:{type:'iframe', src:'https://www.youtube.com/embed/SrawKucSSRw'},
+        caption: 'Aquí la máquina escucha: un conjunto de sensores captura movimientos y los traduce en arquitectura sonora compleja. La instalación opera como sistema nervioso extendido, donde cada gesto reconfigura el ambiente acústico. Técnicamente explora mapeos no triviales entre cuerpo y sonido; filosóficamente, desplaza la agencia expresiva hacia un circuito híbrido; artísticamente, muestra que la experiencia estética puede emerger de un modelo de atención maquínica hipersensible, clave para la estética sintiente.',
+      },
+      {
+        id:'w06',
+        title:'The Helpless Robot',
+        author:'Norman T. White',
+        year:1987,
+        sci:0.55,
+        features:{ sensors:0.40, estado:0.50, adapt:0.60, autonomia:0.60, afecto:0.60 },
+        text:`The Helpless Robot implementa una lógica discursiva que alterna súplica, manipulación y agresividad para incitar al público a asistirlo físicamente, evidenciando cómo patrones de lenguaje programado generan empatía y resistencia. La pieza aporta al horizonte de la estética sintiente una reflexión sobre la construcción algorítmica de carácter y dependencia.`,
+        media:{type:'iframe', src:'https://www.youtube.com/embed/LYyAHOxY7jU'},
+        caption: 'The Helpless Robot se sostiene en una lógica lingüística programada que alterna súplica, manipulación y reproche para inducir al público a moverlo. Su aporte técnico es mínimo en sensores pero sofisticado en dramaturgia algorítmica; su aporte filosófico consiste en revelar cómo el comportamiento verbal automatizado produce atribuciones de carácter y necesidad. La obra expone que la estética sintiente no depende solo de hardware perceptivo, sino de guiones de relación que construyen la apariencia de interioridad.',
+      },
+      {
+        id:'w07',
+        title:'Interactive Plant Growing',
+        author:'Sommerer & Mignonneau',
+        year:1992,
+        sci:0.60,
+        features:{ sensors:0.60, estado:0.40, adapt:0.50, autonomia:0.40, afecto:0.70 },
+        text:`Interactive Plant Growing vincula señales eléctricas de plantas reales con el crecimiento de estructuras virtuales, configurando un ciclo de percepción y respuesta entre biología y código. Este ensamblaje cuestiona qué cuerpos cuentan como sensores y sugiere una estética sintiente trans-especie.`,
+        media:{type:'iframe', src:'https://www.youtube.com/embed/JXX7JNFD2X8'},
+        caption: 'Al conectar señales de plantas vivas con el crecimiento de estructuras virtuales, la pieza instituye un bucle biocibernético donde lo vegetal deviene interfaz. Técnicamente combina sensórica analógica, modelado gráfico y respuesta en tiempo real; filosóficamente, cuestiona la exclusividad humana de la agencia significativa; artísticamente, hace visible una sensibilidad distribuida entre organismos y sistemas digitales. Contribuye a la estética sintiente ampliando el campo de lo que puede ser considerado “sensorium” artístico.',
+      },
+      {
+        id:'w08',
+        title:'Surface Tension',
+        author:'Rafael Lozano-Hemmer',
+        year:1992,
+        sci:0.50,
+        features:{ sensors:0.50, estado:0.30, adapt:0.30, autonomia:0.40, afecto:0.50 },
+        text:`Surface Tension construye un ojo ampliado por tecnologías de seguimiento que fija su mirada sobre el visitante, dramatizando la asimetría entre ver y ser visto. Al hacer sensible el régimen de visión maquínica, la obra integra el dispositivo de vigilancia en el campo de la estética sintiente.`,
+        media:{type:'iframe', src:'https://www.youtube.com/embed/sRZXMwtfZJI'},
+        caption: 'Un ojo gigante sigue al espectador mediante seguimiento automatizado, instaurando un régimen de mirada invertida. La pieza hace explícito el ensamblaje técnico de vigilancia, donde el sujeto observado deviene objeto de cálculo. Al teatralizar esta asimetría, Surface Tension muestra cómo la percepción maquínica produce afectos de exposición, control y sospecha, integrando la estética sintiente en el análisis crítico de los sistemas de visión.',
+      },
+      {
+        id:'w09',
+        title:'The Telegarden',
+        author:'Ken Goldberg et al.',
+        year:1995,
+        sci:0.75,
+        features:{ sensors:0.60, estado:0.50, adapt:0.50, autonomia:0.60, afecto:0.60 },
+        text:`The Telegarden integra robótica industrial y red telemática para delegar el cuidado de un jardín real a usuarios remotos, constituyendo un paisaje de co-mantenimiento mediado por máquinas. Esta redistribución de agencia ecológica-tecnológica amplía el campo de la estética sintiente hacia infraestructuras colaborativas.`,
+        media:{type:'iframe', src:'https://www.youtube.com/embed/BCEC1tfc5Jc'},
+        caption: 'The Telegarden coordina brazo robótico, infraestructura de red y sustrato vegetal para que una comunidad distribuida cuide un mismo jardín. Técnicamente demuestra la telepresencia aplicada al mantenimiento de vida; filosóficamente plantea una ética compartida entre usuarios, máquina y plantas; artísticamente desplaza el foco de la obra al continuo de cuidados. Así, la estética sintiente aparece como cualidad emergente de una ecología conectada más que de un dispositivo aislado.',
+      },
+      {
+        id:'w10',
+        title:'Text Rain',
+        author:'Utterback & Achituv',
+        year:1999,
+        sci:0.45,
+        features:{ sensors:0.50, estado:0.20, adapt:0.20, autonomia:0.30, afecto:0.70 },
+        text:`Text Rain hace descender letras que se acumulan sobre los cuerpos captados por cámara, obligando al espectador a encarnar el acto de lectura. La pieza muestra cómo la sensibilidad computacional al movimiento reorganiza las relaciones entre texto, cuerpo y sentido, en línea con la hipótesis de una estética sintiente distributiva.`,
+        media:{type:'iframe', src:'https://www.youtube.com/embed/f_u3sSffS78'},
+        caption: 'En Text Rain, letras cayendo se acumulan sobre las siluetas captadas por cámara, de modo que leer exige habitar la interfaz. La sensibilidad técnica al movimiento corporal convierte al espectador en superficie semántica. La pieza articula aportes formales (interactividad poética) y conceptuales (inscripción del cuerpo como operador de lenguaje), alineándose con la estética sintiente al situar inteligencia y sentido en la coreografía compartida entre texto, algoritmo y gesto.',
+      },
+      {
+        id:'w11',
+        title:'Autopoiesis',
+        author:'Ken Rinaldo',
+        year:2000,
+        sci:0.70,
+        features:{ sensors:0.60, estado:0.50, adapt:0.60, autonomia:0.70, afecto:0.60 },
+        text:`Autopoiesis presenta una red de brazos robóticos que intercambian señales y ajustan su comportamiento de manera coordinada, evocando un colectivo artificial en permanente negociación. Esta lógica auto-organizativa inscribe la estética sintiente en marcos sistémicos más allá de la obra individual.`,
+        media:{type:'iframe', src:'https://www.youtube.com/embed/3w53KboB-00'},
+        caption: 'Autopoiesis presenta una colonia de brazos robóticos interconectados que negocian posiciones y sonoridades en respuesta a estímulos. Su diseño técnico enfatiza la comunicación entre artefactos y la variación emergente; su marco teórico alude a sistemas vivos auto-organizados. La obra consolida la idea de que la estética sintiente puede entenderse como propiedad colectiva de redes de dispositivos que se co-regulan.',
+      },
+      {
+        id:'w12',
+        title:'Agent Ruby',
+        author:'Lynn Hershman Leeson',
+        year:2002,
+        sci:0.60,
+        features:{ sensors:0.40, estado:0.60, adapt:0.60, autonomia:0.50, afecto:0.50 },
+        text:`Agent Ruby activa un agente conversacional en línea que almacena fragmentos de diálogos y los reconfigura, escenificando una subjetividad algorítmica con memoria propia. La obra abre un campo para pensar la estética sintiente como acumulación y recomposición narrativa automatizada.`,
+        media:{type:'iframe', src:'https://www.youtube.com/embed/sM1iqtsThWE'},
+        caption: 'Agent Ruby propone un agente conversacional en red que acumula memoria de diálogos y construye una personalidad fracturada pero persistente. Tecnológicamente explora interfaces de lenguaje natural tempranas; filosóficamente interroga la noción de sujeto digital; artísticamente transforma el archivo en zona de ficción viva. Su contribución a la estética sintiente reside en mostrar cómo la continuidad de memoria y respuesta puede sostener la ilusión de una interioridad maquínica.',
+      },
+      {
+        id:'w13',
+        title:'Messa di Voce',
+        author:'Levin & Lieberman',
+        year:2003,
+        sci:0.55,
+        features:{ sensors:0.60, estado:0.30, adapt:0.30, autonomia:0.40, afecto:0.70 },
+        text:`Messa di Voce emplea captura y análisis de voz para generar visualizaciones dinámicas que envuelven a los performers, de modo que el lenguaje se hace topología gráfica sensible. Esta traducción técnico-estética de la voz contribuye a una concepción de estética sintiente centrada en la respuesta atenta a la expresividad humana.`,
+        media:{type:'iframe', src:'https://www.youtube.com/embed/STRMcmj-gHc'},
+        caption: 'Esta obra combina análisis de voz, captura de movimiento y proyección para que el habla genere formas visuales que rodean a los performers. Desde lo técnico, plantea una cartografía precisa entre intensidad, timbre y figura; desde lo filosófico, inscribe el lenguaje en una corporalidad expandida; desde lo artístico, hace del sistema un interlocutor que “escucha” y reacciona. Contribuye a la estética sintiente al enfatizar la co-producción sensorial entre voz y máquina.',
+      },
+      {
+        id:'w14',
+        title:'Augmented Fish Reality',
+        author:'Ken Rinaldo',
+        year:2004,
+        sci:0.65,
+        features:{ sensors:0.70, estado:0.50, adapt:0.60, autonomia:0.60, afecto:0.60 },
+        text:`Augmented Fish Reality convierte a los peces en operadores de vehículos robóticos, integrando visión y sensórica para traducir su desplazamiento en navegación técnica. Al otorgar agencia operativa a animales no humanos, amplía la noción de dispositivo sintiente hacia ensamblajes biocibernéticos.`,
+        media:{type:'iframe', src:'https://www.youtube.com/embed/7Pt2PuKMasY'},
+        caption: 'Al permitir que peces controlen vehículos robóticos, la pieza redistribuye la agencia operativa hacia lo animal mediante traducción sensorial. El dispositivo evidencia que los sistemas técnicos pueden amplificar perspectivas no humanas, desplazando el eje antropocéntrico. Su contribución a la estética sintiente radica en imaginar configuraciones biocibernéticas donde la sensibilidad se construye entre especies y máquinas.',
+      },
+      {
+        id:'w15',
+        title:'Pulse Room',
+        author:'Rafael Lozano-Hemmer',
+        year:2006,
+        sci:0.50,
+        features:{ sensors:0.60, estado:0.30, adapt:0.30, autonomia:0.40, afecto:0.60 },
+        text:`Pulse Room capta el pulso de cada participante y lo almacena como huella lumínica sucesiva, construyendo una memoria colectiva de ritmos cardiacos. La operación técnico-poética sobre datos biométricos sitúa la estética sintiente en el cruce entre vigilancia íntima y ritual compartido.`,
+        media:{type:'iframe', src:'https://www.youtube.com/embed/h1i7l1wnNCE'},
+        caption: 'Pulse Room captura el ritmo cardíaco de cada visitante y lo convierte en secuencia lumínica, generando un archivo efímero de presencias. Este uso de biosensores vincula medición fisiológica y experiencia colectiva, tensando la frontera entre intimidad y espectáculo de datos. La obra aporta a la estética sintiente una lectura crítica de cómo la sensibilidad técnica puede operar sobre y con los cuerpos.',
+      },
+      {
+        id:'w16',
+        title:'Hylozoic Ground',
+        author:'Philip Beesley',
+        year:2010,
+        sci:0.70,
+        features:{ sensors:0.70, estado:0.40, adapt:0.50, autonomia:0.50, afecto:0.60 },
+        text:`Hylozoic Ground despliega una membrana arquitectónica de componentes sensorizados que se contraen y vibran ante la proximidad, evocando un ecosistema respirante artificial. El proyecto articula ingeniería, biología especulativa y arquitectura, consolidando la estética sintiente como cualidad ambiental.`,
+        media:{type:'iframe', src:'https://www.youtube.com/embed/v86B9Nz_LVU'},
+        caption: 'Hylozoic Ground despliega una arquitectura porosa de componentes sensorizados que reaccionan con micro-movimientos, sugiriendo un ambiente casi vivo. Su sofisticación técnica integra materiales ligeros, microcontroladores y sistemas de detección; filosóficamente reactiva imaginarios animistas en clave tecnológica; artísticamente instala la experiencia en un umbral entre hábitat y organismo. Encaja en la estética sintiente como modelo de entorno-respuesta inmersivo.',
+      },
+      {
+        id:'w17',
+        title:'Rain Room',
+        author:'Random International',
+        year:2012,
+        sci:0.60,
+        features:{ sensors:0.70, estado:0.30, adapt:0.40, autonomia:0.50, afecto:0.70 },
+        text:`Rain Room utiliza visión por computadora y control de válvulas para suspender la lluvia allí donde se ubican los cuerpos, produciendo una experiencia de excepción climática programada. Esta suspensión selectiva dramatiza el poder de los sistemas técnicos para modular el ambiente, inscribiendo la estética sintiente en el gobierno algorítmico de lo sensible.`,
+        media:{type:'iframe', src:'https://www.youtube.com/embed/yXqrv0IuiG0'},
+        caption:'Rain Room organiza sensores y actuadores para suspender la lluvia allí donde se sitúan los cuerpos, otorgando al visitante la sensación de excepción climática personalizada. La pieza hace visible el poder de los sistemas de control ambiental basados en datos y, al mismo tiempo, ofrece una experiencia casi milagrosa administrada por código. Contribuye al campo de la estética sintiente al mostrar cómo la máquina modula directamente las condiciones materiales de percepción.',
+      },
+      {
+        id:'w18',
+        title:'Drawing Operations',
+        author:'Sougwen Chung + D.O.U.G.',
+        year:2015,
+        sci:0.80,
+        features:{ sensors:0.80, estado:0.60, adapt:0.70, autonomia:0.60, afecto:0.70 },
+        text:`Drawing Operations configura un sistema de visión, aprendizaje automático y robótica que co-dibuja junto a la artista, produciendo trazos resultantes de una negociación entre gesto humano y cálculo. Esta co-agencia inscribe la estética sintiente en procesos de colaboración simétrica, donde la máquina aparece como interlocutor creativo.`,
+        media:{type:'iframe', src:'https://www.youtube.com/embed/jngkUu-aBz8'},
+        caption: 'Drawing Operations articula visión por computador, modelos de aprendizaje y robots para co-dibujar con la artista, produciendo trazos que no pertenecen ni solo al humano ni solo a la máquina. Técnica y conceptualmente instala una relación de co-agencia donde el sistema parece interpretar y anticipar gestos. Esta negociación continuo-creativa es central para entender la estética sintiente como práctica colaborativa entre inteligencias heterogéneas.',
+      },
+      {
+        id:'w19',
+        title:'Unsupervised',
+        author:'Refik Anadol',
+        year:2022,
+        sci:0.90,
+        features:{ sensors:0.40, estado:0.70, adapt:0.70, autonomia:0.50, afecto:0.40 },
+        text:`Unsupervised emplea modelos de aprendizaje automático entrenados con colecciones del MoMA para generar flujos visuales autónomos en tiempo real, presentando al museo como materia prima estadística. El dispositivo técnico convierte el archivo institucional en proceso continuo de interpretación algorítmica; filosóficamente sugiere una memoria maquínica que sueña el acervo; artísticamente consolida la imagen de una máquina que produce imaginarios propios, situándose en el extremo del mapa de la estética sintiente.`,
+        media:{type:'iframe', src:'https://www.youtube.com/embed/7uSLL4m6reU'},
+        caption: 'Unsupervised emplea modelos de aprendizaje automático entrenados con colecciones del MoMA para generar flujos visuales autónomos en tiempo real, presentando al museo como materia prima estadística. El dispositivo técnico convierte el archivo institucional en proceso continuo de interpretación algorítmica; filosóficamente sugiere una memoria maquínica que “sueña” el acervo; artísticamente consolida la imagen de una máquina que produce imaginarios propios. Se sitúa en el extremo del mapa de la estética sintiente, como síntesis de infraestructura de datos, cálculo masivo y espectáculo perceptivo.',
+      }
+    ];
+
+    const CENTRAL_NODE = {
+      id:'centro',
+      title:'Hacia una Estética Sintiente',
+      subtitle:'Omar Jaimes Rew',
+      text: `Este ensayo curatorial, concebido como una presentación-exposición, se articula a partir de la visualización de datos como herramienta metodológica para la investigación y la práctica curatorial. Su estructura formal se inspira en una ecuación de regresión lineal: un modelo tridimensional que mapea, en tres dimensiones interrelacionadas, diversas piezas artísticas con el objetivo de evidenciar su pertinencia, sus tensiones y los patrones que configuran la emergencia de una “estética sintiente”.
+
+Comencemos por delimitar el término “sintiente”. Habitamos un entorno donde las tecnologías digitales se han expandido de forma sistemática. Sistemas de inteligencia artificial perciben el mundo mediante cámaras, micrófonos, sensores de profundidad, temperatura y otros dispositivos, integrados en objetos cotidianos como el teléfono móvil. Esta infraestructura técnico-perceptiva configura entornos poblados por artefactos capaces de captar información, procesarla y reaccionar a su contexto. Sin embargo, esa capacidad de detección y respuesta no basta para afirmar que estos objetos “sienten”.
+
+Sentir supone más que gestionar entradas de datos. Exige la posibilidad de una interioridad mínima, una organización propia de la experiencia que interpreta, valora y jerarquiza lo percibido. Desde la filosofía de la mente y ciertas perspectivas fenomenológicas, la sintiencia se vincula con una experiencia situada, encarnada y autoreferencial, no reducible al cálculo ni a la mera correlación estadística. En este marco, los sistemas actuales pueden describirse como sensibles a variables, pero no como entidades sintientes.
+
+En el campo del arte, la incorporación de estas tecnologías ha dado lugar a nuevas categorías, entre ellas el arte interactivo, entendido como aquel conjunto de prácticas en las que la obra ajusta su comportamiento, configuración o apariencia en función de la acción del público o de las variaciones del entorno. El objetivo de este ensayo se ancla en discutir qué tan cerca o lejos nos encontramos de dispositivos artísticos sintientes: obras concebidas como sistemas capaces de percibir, procesar e interpretar información de su contexto y, a partir de ello, modular su forma, su respuesta y su efecto estético. Pensar una “estética sintiente” implica desplazar la obra de arte de la condición de objeto estable hacia la de agente perceptivo que negocia, en tiempo real, su modo de aparecer.`,
+      media:{
+        type:'image',
+        src:'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="600" height="338"><rect width="100%" height="100%" fill="black"/><text x="50%" y="45%" dominant-baseline="middle" text-anchor="middle" fill="white" font-family="Arial" font-size="18">Hacia una Estética Sintiente</text><text x="50%" y="60%" dominant-baseline="middle" text-anchor="middle" fill="white" font-family="Arial" font-size="14">Omar Jaimes Rew</text></svg>'
+      }
+    };
+
+    // ===================== ESCENA Y CONTROLES =====================
+    const canvas = document.getElementById('webgl');
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.toneMapping = THREE.ReinhardToneMapping;
+    renderer.toneMappingExposure = 1.1;
+
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x0b0d12);
+
+    const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 200);
+    camera.position.set(0.8, 1.4, 7.5);
+
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.enablePan = true;
+    controls.minDistance = 1.2;
+    controls.maxDistance = 120;
+
+    scene.add(new THREE.AmbientLight(0xffffff, 0.4));
+    const dir = new THREE.DirectionalLight(0xffffff, 0.4); dir.position.set(3,5,6); scene.add(dir);
+
+    // Postprocesado: bloom para que los nodos emanen luz
+    const composer = new EffectComposer(renderer);
+    const renderPass = new RenderPass(scene, camera);
+    composer.addPass(renderPass);
+    const bloomPass = new UnrealBloomPass(
+      new THREE.Vector2(window.innerWidth, window.innerHeight),
+      1.3,   // intensidad del halo
+      0.4,   // radio
+      0.0    // umbral, todo lo brillante contribuye
+    );
+    composer.addPass(bloomPass);
+
+    // ===================== MAPEO A COORDENADAS =====================
+    const years = WORKS.map(w=>w.year);
+    const Ymin = Math.min(...years), Ymax = Math.max(...years);
+
+    const X_RANGE = 12;
+    const Y_RANGE = 8;
+    const Z_RANGE = 8;
+
+    const xFromYear  = y   => ((y - Ymin)/(Ymax - Ymin) - 0.5) * X_RANGE;
+    const yFromScore = s   => (s - 0.5) * Y_RANGE;
+    const zFromSci   = sci => (sci - 0.5) * Z_RANGE;
+
+    const yearFromX = x => { const r = (x / X_RANGE) + 0.5; return Ymin + r * (Ymax - Ymin); };
+    const scoreFromY = y => (y / Y_RANGE) + 0.5;
+    const sciFromZ   = z => (z / Z_RANGE) + 0.5;
+
+    const minX = xFromYear(Ymin), maxX = xFromYear(Ymax);
+    const yLow = -Y_RANGE/2, yHigh = Y_RANGE/2;
+    const zLow = -Z_RANGE/2, zHigh = Z_RANGE/2;
+
+    const AXES_VISIBLE = false;
+    const axisLines = [];
+
+    const dataBox = new THREE.Box3(
+      new THREE.Vector3(minX, yLow, zLow),
+      new THREE.Vector3(maxX, yHigh, zHigh)
+    );
+
+    // ===================== SCORE IMPLEMENTADO =====================
+    const clamp01 = v => Math.max(0, Math.min(1, v));
+    const xNormYear = y => (y - Ymin) / (Ymax - Ymin);
+
+    function scoreFromFeatures(f){
+      const w = WEIGHTS;
+      return (f.sensors||0)*w.sensors + (f.estado||0)*w.estado + (f.adapt||0)*w.adapt + (f.autonomia||0)*w.autonomia + (f.afecto||0)*w.afecto;
+    }
+    function implementedScore(work){
+      const base = work.features ? scoreFromFeatures(work.features) : (typeof work.score === 'number' ? work.score : 0.5);
+      const boosted = base + TECH_BOOST * xNormYear(work.year);
+      return clamp01(boosted);
+    }
+
+    // ===================== AJUSTES DINÁMICOS (COLOR / BRILLO) =====================
+    let COLOR_FLOOR = 0.05;      // mezcla hacia blanco para separar tonos
+    let BRIGHT_BASE = 0.15;      // brillo mínimo
+    let BRIGHT_GAIN = 1.50;      // cuánto crece el brillo con Y
+    let BRIGHT_GAMMA = 1.00;     // curva de respuesta
+
+    // azul profundo → rosa intenso a lo largo de X (tiempo)
+    const WHITE = new THREE.Color(0xffffff);
+    const TIME_COLOR_START = new THREE.Color(0x2563eb); // azul
+    const TIME_COLOR_END   = new THREE.Color(0xec4899); // rosa
+
+    function colorFromTime(tX){
+      tX = clamp01(tX);
+      const c = TIME_COLOR_START.clone().lerp(TIME_COLOR_END, tX);
+      if (COLOR_FLOOR > 0){
+        // eleva ligeramente hacia blanco para evitar saturación uniforme
+        c.lerp(WHITE, COLOR_FLOOR);
+      }
+      return c;
+    }
+
+    // luminosidad controlada por Y (sintiencia implementada)
+    function brightnessFromY(tY){
+      const y = Math.pow(clamp01(tY), BRIGHT_GAMMA);
+      const v = BRIGHT_BASE + BRIGHT_GAIN * y;
+      return Math.max(0, Math.min(4.0, v)); // hasta 4 para forzar bloom en Y alta
+    }
+
+    // ===================== NODOS =====================
+    const group = new THREE.Group();
+    scene.add(group);
+
+    const satGeo = new THREE.SphereGeometry(0.07, 18, 18);
+    const nodes = [];
+
+    for(const w of WORKS){
+      const sPrime = implementedScore(w);
+      const tX = xNormYear(w.year);
+      const tY = sPrime;
+      const tZ = w.sci ?? 0.5;
+
+      const baseColor = colorFromTime(tX);
+      const emissiveI = brightnessFromY(tY);
+
+      const mat = new THREE.MeshStandardMaterial({
+        color: baseColor,
+        roughness: 0.55,
+        metalness: 0.05,
+        emissive: baseColor.clone(),
+        emissiveIntensity: emissiveI
+      });
+
+      const mesh = new THREE.Mesh(satGeo, mat);
+      mesh.position.set(
+        xFromYear(w.year),
+        yFromScore(sPrime),
+        (w.sci != null ? (w.sci - 0.5) * Z_RANGE : 0)
+      );
+      mesh.userData = { id:w.id, label:`${w.title} (${w.year})`, sPrime, sci:w.sci, year:w.year, tX, tY, tZ };
+      nodes.push(mesh);
+      group.add(mesh);
+    }
+
+    const centerGeom = new THREE.SphereGeometry(0.16, 32, 32);
+    const FUTURE_YEAR = 2025;
+    const futureX = xFromYear(FUTURE_YEAR);
+    const centerHue = colorFromTime(1);
+    const centerMat  = new THREE.MeshStandardMaterial({
+      color: centerHue,
+      emissive: centerHue.clone(),
+      emissiveIntensity: brightnessFromY(1.0), // centro muy luminoso
+      roughness: 0.3,
+      metalness: 0.3
+    });
+    const center = new THREE.Mesh(centerGeom, centerMat);
+    center.position.set(futureX, yHigh, 0);
+    center.userData = { id:'centro', label:'Hacia una Estética Sintiente · Omar Jaimes Rew (2025 / máx Y)', sPrime:1, sci:1, year:FUTURE_YEAR, tX:1, tY:1, tZ:1 };
+    group.add(center);
+
+    const linkLines = [];
+    const lineMat = new THREE.LineBasicMaterial({ color: 0x243041, transparent:true, opacity:0.35 });
+    for(const n of nodes){
+      const lg = new THREE.BufferGeometry();
+      lg.setAttribute('position', new THREE.BufferAttribute(new Float32Array([
+        center.position.x, center.position.y, center.position.z,
+        n.position.x,      n.position.y,      n.position.z
+      ]),3));
+      const ln = new THREE.Line(lg, lineMat);
+      linkLines.push(ln);
+      group.add(ln);
+    }
+
+    // ===================== OVERLAY =====================
+    const overlay = document.getElementById('overlay');
+    const ovTitle = document.getElementById('ov-title');
+    const ovText  = document.getElementById('ov-text');
+    const ovId    = document.getElementById('ov-id');
+    const ovMedia = document.getElementById('ov-media');
+    const ovCaption = document.getElementById('ov-caption');
+    const ovClose = document.getElementById('ov-close');
+    const tooltip = document.getElementById('tooltip');
+    
+
+    const HUD = {
+      mode: document.getElementById('hud-mode'),
+      x: document.getElementById('hud-x'),
+      y: document.getElementById('hud-y'),
+      z: document.getElementById('hud-z'),
+      cam: document.getElementById('hud-cam')
+    };
+
+    const raycaster = new THREE.Raycaster();
+    const mouse = new THREE.Vector2();
+
+    function toNDC(event){
+      const rect = renderer.domElement.getBoundingClientRect();
+      mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+      mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+    }
+    function hitTest(){
+      raycaster.setFromCamera(mouse, camera);
+      const objects = [center, ...nodes];
+      return raycaster.intersectObjects(objects, false);
+    }
+
+    function showTooltip(obj, event){
+      tooltip.textContent = obj.userData.label || obj.userData.id;
+      tooltip.style.left = `${event.clientX}px`;
+      tooltip.style.top  = `${event.clientY}px`;
+      tooltip.style.display = 'block';
+    }
+    function hideTooltip(){ tooltip.style.display = 'none'; }
+
+function buildMediaEl(media){
+  if(!media) return null;
+
+  let el = null;
+
+  if(media.type === 'image'){
+    el = new Image();
+    el.src = media.src;
+    el.alt = media.alt || '';
+  } else if(media.type === 'video'){
+    el = document.createElement('video');
+    el.src = media.src;
+    el.controls = true;
+    el.playsInline = true;
+  } else if(media.type === 'audio'){
+    el = document.createElement('audio');
+    el.src = media.src;
+    el.controls = true;
+  } else if(media.type === 'iframe'){
+    el = document.createElement('iframe');
+    el.width = media.width || 560;
+    el.height = media.height || 315;
+    const src = media.src || '';        // sin tocar el dominio
+    el.src = src;
+    el.title = media.title || 'YouTube video player';
+    el.frameBorder = '0';
+    el.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+    el.referrerPolicy = media.referrerPolicy || 'strict-origin-when-cross-origin';
+    el.allowFullscreen = true;
+  }
+
+  return el;
+}
+
+
+
+
+    function openOverlay(id){
+      ovText.innerHTML = '';
+      ovMedia.innerHTML = '';
+      ovCaption.textContent = '';
+
+      if(id === 'centro'){
+        ovTitle.textContent = CENTRAL_NODE.title;
+
+        const meta = document.createElement('div');
+        meta.className = 'meta';
+        meta.textContent = `Autor: ${CENTRAL_NODE.subtitle || 'Omar Jaimes Rew'}`;
+        ovText.appendChild(meta);
+
+        const p = document.createElement('p');
+        p.textContent = CENTRAL_NODE.text;
+        ovText.appendChild(p);
+
+        const pNote = document.createElement('p');
+        pNote.textContent = 'Nodo conceptual más luminoso: máxima sintiencia implementada y máxima cercanía científica.';
+        ovText.appendChild(pNote);
+
+        ovId.textContent = `ID: ${id}`;
+      } else {
+        const data = WORKS.find(w=>w.id===id);
+        if(!data) return;
+
+        ovTitle.textContent = data.title;
+
+        const meta = document.createElement('div');
+        meta.className = 'meta';
+        meta.textContent = `${data.author||''} · ${data.year||''}`;
+        ovText.appendChild(meta);
+
+        const p = document.createElement('p');
+        p.textContent = data.text || '';
+        ovText.appendChild(p);
+
+    
+
+        const kv = document.createElement('p');
+        kv.innerHTML = `<strong>Índice Y (implementado):</strong> ${implementedScore(data).toFixed(2)} · <strong>Z (ciencia):</strong> ${(data.sci??0).toFixed(2)}`;
+        ovText.appendChild(kv);
+
+        ovId.textContent = `ID: ${id}`;
+
+        const el = buildMediaEl(data.media);
+        if(el) ovMedia.appendChild(el);
+
+        if(data.caption){
+    ovCaption.textContent = data.caption;
+  }
+
+
+      }
+
+      overlay.classList.add('show');
+      overlay.setAttribute('aria-hidden','false');
+    }
+
+    function closeOverlay(){
+      overlay.classList.remove('show');
+      overlay.setAttribute('aria-hidden','true');
+    }
+    ovClose.addEventListener('click', closeOverlay);
+    window.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeOverlay(); });
+
+    // ===================== HUD =====================
+    const tmpPoint = new THREE.Vector3();
+
+    function updateHudFromPoint(pt){
+      const year = Math.round(yearFromX(pt.x));
+      const yIdx = clamp01(scoreFromY(pt.y));
+      const zSci = clamp01(sciFromZ(pt.z));
+      HUD.x.textContent = isFinite(year) ? String(year) : '—';
+      HUD.y.textContent = isFinite(yIdx) ? yIdx.toFixed(2) : '—';
+      HUD.z.textContent = isFinite(zSci) ? zSci.toFixed(2) : '—';
+    }
+
+    function updateHudCamera(){
+      const d = camera.position.distanceTo(controls.target);
+      HUD.cam.textContent = `dist:${d.toFixed(2)} fov:${camera.fov.toFixed(0)}°`;
+    }
+
+    function updateHUD(){
+      updateHudCamera();
+      raycaster.setFromCamera(mouse, camera);
+      const hit = hitTest();
+      if(hit.length){
+        const o = hit[0].object;
+        HUD.mode.textContent = 'nodo';
+        HUD.x.textContent = (o.userData.year ?? Math.round(yearFromX(o.position.x))).toString();
+        HUD.y.textContent = (o.userData.sPrime ?? clamp01(scoreFromY(o.position.y))).toFixed(2);
+        HUD.z.textContent = (o.userData.sci   ?? clamp01(sciFromZ(o.position.z))).toFixed(2);
+        return;
+      }
+      HUD.mode.textContent = 'volumen';
+      if(raycaster.ray.intersectBox(dataBox, tmpPoint)) updateHudFromPoint(tmpPoint);
+      else HUD.x.textContent = HUD.y.textContent = HUD.z.textContent = '—';
+    }
+
+    // ===================== CONTROLES EN VIVO =====================
+    const UI = {
+      floor: document.getElementById('ctl-floor'),
+      bbase: document.getElementById('ctl-bbase'),
+      bgain: document.getElementById('ctl-bgain'),
+      bgamma: document.getElementById('ctl-bgamma'),
+      vFloor: document.getElementById('val-floor'),
+      vBbase: document.getElementById('val-bbase'),
+      vBgain: document.getElementById('val-bgain'),
+      vBgamma: document.getElementById('val-bgamma')
+    };
+
+    function applyColorAndEmission(mesh){
+      const baseColor = colorFromTime(mesh.userData.tX);
+      mesh.material.color.copy(baseColor);
+      mesh.material.emissive.copy(baseColor);
+      mesh.material.emissiveIntensity = brightnessFromY(mesh.userData.tY);
+    }
+
+    function refreshAppearance(){
+      for(const n of nodes) applyColorAndEmission(n);
+      applyColorAndEmission(center);
+    }
+
+    function updateUIValues(){
+      UI.vFloor.textContent = COLOR_FLOOR.toFixed(2);
+      UI.vBbase.textContent = BRIGHT_BASE.toFixed(2);
+      UI.vBgain.textContent = BRIGHT_GAIN.toFixed(2);
+      UI.vBgamma.textContent = BRIGHT_GAMMA.toFixed(2);
+    }
+
+    function bindLiveControls(){
+      UI.floor.addEventListener('input', ()=>{ COLOR_FLOOR = parseFloat(UI.floor.value); updateUIValues(); refreshAppearance(); });
+      UI.bbase.addEventListener('input', ()=>{ BRIGHT_BASE = parseFloat(UI.bbase.value); updateUIValues(); refreshAppearance(); });
+      UI.bgain.addEventListener('input', ()=>{ BRIGHT_GAIN = parseFloat(UI.bgain.value); updateUIValues(); refreshAppearance(); });
+      UI.bgamma.addEventListener('input', ()=>{ BRIGHT_GAMMA = parseFloat(UI.bgamma.value); updateUIValues(); refreshAppearance(); });
+      updateUIValues();
+    }
+
+    bindLiveControls();
+
+    // ===================== INTERACCIÓN =====================
+    let pointerDown = null;
+    renderer.domElement.addEventListener('pointerdown', e => { pointerDown = {x:e.clientX, y:e.clientY}; });
+    renderer.domElement.addEventListener('pointermove', e => {
+      toNDC(e);
+      const hits = hitTest();
+      if(hits.length){
+        renderer.domElement.style.cursor = 'pointer';
+        showTooltip(hits[0].object, e);
+      } else {
+        renderer.domElement.style.cursor = 'default';
+        hideTooltip();
+      }
+      updateHUD();
+    });
+    renderer.domElement.addEventListener('pointerup', e => {
+      if(pointerDown){
+        const dx = Math.abs(e.clientX - pointerDown.x);
+        const dy = Math.abs(e.clientY - pointerDown.y);
+        if(dx > 4 || dy > 4){ pointerDown = null; return; }
+      }
+      toNDC(e);
+      const hits = hitTest();
+      if(hits.length) openOverlay(hits[0].object.userData.id);
+      pointerDown = null;
+      updateHUD();
+    });
+
+    function onResize(){
+      const w = window.innerWidth, h = window.innerHeight;
+      renderer.setSize(w, h);
+      composer.setSize(w, h);
+      bloomPass.setSize(w, h);
+      camera.aspect = w/h;
+      camera.updateProjectionMatrix();
+      updateHudCamera();
+    }
+    window.addEventListener('resize', onResize);
+
+    const clock = new THREE.Clock();
+    const ROT_SPEED_Y = 0.04; // giro muy lento horizontal (eje Y)
+
+    // ===================== PULSOS DE LUZ EN LOS HILOS =====================
+    const packets = [];
+    const packetGeo = new THREE.SphereGeometry(0.01, 8, 8);
+    const tmpPacketVec = new THREE.Vector3();
+
+    for (const n of nodes) {
+      const c = new THREE.Color(0xffffff);
+      const pm = new THREE.MeshStandardMaterial({
+        color: c,
+        emissive: c.clone(10),
+        emissiveIntensity: brightnessFromY(100),
+        transparent: true,
+        opacity: 0.5,
+        roughness: 0.5,
+        metalness: 0.05
+      });
+      const p = new THREE.Mesh(packetGeo, pm);
+      p.userData = {
+        start: n.position.clone(),
+        end: center.position.clone(),
+        offset: Math.random(),
+        speed: 0.10 + Math.random() *0.5
+      };
+      p.position.copy(p.userData.start);
+      group.add(p);
+      packets.push(p);
+    }
+
+    // ===================== TESTS BÁSICOS =====================
+    const testsBox = document.getElementById('tests');
+    function tlog(label, ok){
+      if(!testsBox) return;
+      const line = document.createElement('div');
+      line.className = ok ? 'tpass' : 'tfail';
+      line.textContent = (ok ? '✔ ' : '✖ ') + label;
+      testsBox.appendChild(line);
+    }
+
+    (function selfTests(){
+      if(!testsBox) return;
+      testsBox.innerHTML = '<b>Pruebas</b>:';
+      tlog('THREE cargado', !!THREE);
+      tlog('Renderer ok', !!renderer && !!renderer.domElement);
+      tlog('Escena lista', !!scene && !!camera);
+      tlog('Nodos generados', nodes.length === WORKS.length);
+      tlog('Centro presente', !!center);
+      tlog('Raycaster listo', !!raycaster);
+      tlog('Overlay presente', !!overlay);
+    })();
+
+    // Overlay inicial: nodo principal
+    openOverlay('centro');
+
+    // ===================== LOOP DE ANIMACIÓN =====================
+    function animate(){
+      const delta = clock.getDelta();
+      const elapsed = clock.elapsedTime;
+
+      // rotación horizontal lenta del conjunto sobre eje Y
+      group.rotation.y += ROT_SPEED_Y * delta;
+
+      // pulsos discretos hijo → centro
+      for (const p of packets) {
+        const u = (elapsed * p.userData.speed + p.userData.offset) % 1; // 0..1
+        tmpPacketVec.copy(p.userData.start).lerp(p.userData.end, u);
+        p.position.copy(tmpPacketVec);
+        const pulse = Math.sin(u * Math.PI); // 0→1→0
+        p.material.opacity = 0.02 + 0.08 * pulse;
+        p.material.emissiveIntensity = 0.10 + 0.30 * pulse;
+      }
+
+      controls.update();
+      updateHUD();
+      composer.render();
+      requestAnimationFrame(animate);
+    }
+
+    animate();
+  </script>
+</body>
+</html>
