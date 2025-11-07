@@ -916,19 +916,23 @@ function buildMediaEl(media){
       const c = new THREE.Color(0xffffff);
       const pm = new THREE.MeshStandardMaterial({
         color: c,
-        emissive: c.clone(10),
-        emissiveIntensity: brightnessFromY(100),
+        emissive: c.clone(),
+        emissiveIntensity: 0.6,
         transparent: true,
         opacity: 0.5,
         roughness: 0.5,
         metalness: 0.05
       });
       const p = new THREE.Mesh(packetGeo, pm);
+      const packetLight = new THREE.PointLight(c, 0.0, 1.6, 2.0);
+      packetLight.castShadow = false;
+      p.add(packetLight);
       p.userData = {
         start: n.position.clone(),
         end: center.position.clone(),
         offset: Math.random(),
-        speed: 0.10 + Math.random() *0.5
+        speed: 0.10 + Math.random() *0.5,
+        light: packetLight
       };
       p.position.copy(p.userData.start);
       group.add(p);
@@ -953,8 +957,12 @@ function buildMediaEl(media){
         tmpPacketVec.copy(p.userData.start).lerp(p.userData.end, u);
         p.position.copy(tmpPacketVec);
         const pulse = Math.sin(u * Math.PI); // 0→1→0
+        const emission = 0.20 + 0.45 * pulse;
         p.material.opacity = 0.02 + 0.08 * pulse;
-        p.material.emissiveIntensity = 0.10 + 0.30 * pulse;
+        p.material.emissiveIntensity = emission;
+        if (p.userData.light) {
+          p.userData.light.intensity = 0.35 + 1.25 * pulse;
+        }
       }
 
       controls.update();
